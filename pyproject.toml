@@ -8,6 +8,8 @@ authors = ["Andrey Dubodelov <a.dubodelov@vk.team>"]
 python = "3.11"
 playwright = "^1.28.0"
 pytest-playwright = "^0.3.0"
+pytest-bdd = "^6.1.1"
+bs4 = "^0.0.1"
 
 [tool.poetry.dev-dependencies]
 
