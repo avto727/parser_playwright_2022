@@ -1,10 +1,12 @@
-import json
+import json, os
 from typing import Any
 
 
 class Store:
     def __init__(self) -> None:
-        with open("files/store.json", "w", encoding="utf-8-sig") as file:
+        print(os.getcwd())
+        with open("C:\\Users\\Xiaomi\\PycharmProjects\\Parser_2022\\parser_playwright_2022\\files\\store.json", "w", encoding="utf-8-sig") as file:
+        # with open("files/store.json", "w", encoding="utf-8-sig") as file:
             json.dump({}, file)
 
     def __setitem__(self, key: str, value: Any) -> None:
