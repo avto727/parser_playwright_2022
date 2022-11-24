@@ -25,7 +25,10 @@ class BasePage:
 
     def determ_last_element(self, keyword):
         el = self.choose_selector(keyword)
-        res = el.last.all_inner_texts()[0]
+        if not el.last.all_inner_texts():
+            res = "0"
+        else:
+            res = el.last.all_inner_texts()[0]
         return res
 
 
@@ -45,6 +48,7 @@ class BasePage:
         soup = bs(html, 'html.parser')
         table = soup.find('div', id='a11y-main-content')
         k = 0
+        index += 1 # Вместо индекса цифры поставить букву.
         for i, ad in enumerate(table):
             try:
                 title = ad.find('a', class_='serp-item__title').text
@@ -72,10 +76,11 @@ class BasePage:
             if self.title_filter(config, title):
                 key = f"{str(index)}{str(k)}"
                 # print(i, title, schedule, compensation, href)
+                print(key, title)
                 self.vacancy_dict[key] = [title, compensation, href]
                 k += 1
 
-        print(self.vacancy_dict)
+        # print(self.vacancy_dict)
     #         Sort
 
     # Save to file
@@ -111,3 +116,6 @@ class BasePage:
             return True
         else:
             return False
+
+    def sort_and_save_results(self):
+        print(self.vacancy_dict)
