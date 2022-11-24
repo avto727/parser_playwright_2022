@@ -1,6 +1,10 @@
+
+
 class Elem:
-    @staticmethod
-    def com(name):
-        common = {
-            'Коэф_П2': './/span[@class="mline__item_outcomes_item_outcomealias"][contains(., "П2")]',
+    xp = {
+            'paginator': "//span[contains(@class,'pager-item-not-in-short-range')]",
+        }
+
+    text = {
+            'Button_Всё_верно': ["span", "Всё верно"]
         }
