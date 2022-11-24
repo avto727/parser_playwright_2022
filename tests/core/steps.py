@@ -40,7 +40,8 @@ def pages_processing(base_page, config):
     while index < total_pages:
         search_url = s_url.replace("text=1", f"text={keyword}").replace("page=1", f"page={index}")
         print(f"\nПроход по стр {index}")
+        base_page.data_to_file(f"страница {index}", "", "", "")
         base_page.open(search_url)
         html = base_page.page.content()
-        base_page.get_page_data(html)
+        base_page.get_page_data(config, html, index)
         index = index + 1
