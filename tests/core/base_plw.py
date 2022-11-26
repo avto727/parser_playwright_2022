@@ -1,6 +1,8 @@
 """В файле base_plw.py находятся функции, которые работают с html страницей"""
 import csv
 import json
+from time import sleep
+
 from bs4 import BeautifulSoup as bs
 
 from files.minus_lists import MinusLists
@@ -12,6 +14,7 @@ class BasePage:
 
     def __init__(self, config, setup_browser):
         self.page = setup_browser.page
+        self.browser = setup_browser.browser
         self.elem = Elem()
         self.xp = self.elem.xp
         self.text = self.elem.text
@@ -139,8 +142,7 @@ class BasePage:
             return False
 
     def sort_and_save_results(self):
-        # parsed = json.loads(str(self.vacancy_dict))
-        # print(json.dumps(parsed, indent=4))
+        # сортировка по ЗП
         print(f"Всего вакансий {len(self.vacancy_dict)}")
         print(self.vacancy_dict)
         sorted_vacancy = dict(sorted(self.vacancy_dict.items(), key=lambda item: item[1]))
@@ -154,5 +156,42 @@ class BasePage:
             vacancy.update({i: sorted_vacancy.get(b[i])})
         print(vacancy)
         assert len(vacancy) == len(sorted_vacancy), "Реверс произведен с ошибкой"
+        # Фильтр по одинаковому заголовку. Проверка текста вакансии.
+        count_deleted = 0
+        for i in range(len(a)):
+            j = i + 1
+            for j in range(j, len(a)):
+                if vacancy.get(i)[1] == vacancy.get(j)[1]:
+                    print(vacancy.get(i)[1])
+                    print(vacancy.get(j)[1])
+                    self.page.goto(vacancy.get(i)[2])
+                    context2 = self.browser.new_context()
+                    page2 = context2.new_page()
+                    page2.goto(vacancy.get(j)[2])
+                    content1 = self.page.content()
+                    soup1 = bs(content1, 'html.parser')
+                    p_all1 = soup1.find('div', class_='g-user-content').find_all('p')
+                    # sleep(3)
+                    text_summ1 = ""
+                    for ind in range(3):
+                        try:
+                            text_summ1 += p_all1[ind].text
+                        except:
+                            continue
+                    content2 = page2.content()
+                    soup2 = bs(content2, 'html.parser')
+                    # sleep(3)
+                    p_all2 = soup2.find('div', class_='g-user-content').find_all('p')
+                    text_summ2 = ""
+                    for ind in range(3):
+                        try:
+                            text_summ2 += p_all2[ind].text
+                        except:
+                            continue
+                    if text_summ1 == text_summ2:
+                        print(f"Delete vacancy key {i} url {vacancy.get(j)} ")
+                        count_deleted += 1
+                    else:
+                        context2.close()
 
-        pass
+            pass
