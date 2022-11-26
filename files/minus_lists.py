@@ -1,5 +1,5 @@
 class MinusLists:
-    title_auto_tester_python_minus_list = [
+    title_tester_python_web_minus_list = [
         "Разработ",
         "рекрутер",
         "писатель",
@@ -59,5 +59,9 @@ class MinusLists:
         "Директор",
         "Руководитель",
         "дизайнер",
+        "подработ",
         "Senior Software Engineer",
+    ]
+    title_dev_ios_minus_list = [
+    "python",
     ]

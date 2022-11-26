@@ -10,12 +10,17 @@ from utils.elements import *
 class BasePage:
     path_project = "./"
 
-    def __init__(self, setup_browser):
+    def __init__(self, config, setup_browser):
         self.page = setup_browser.page
         self.elem = Elem()
         self.xp = self.elem.xp
         self.text = self.elem.text
         self.vacancy_dict: dict = {}
+        self.minus_list_dict = {
+            "tester_python_web": MinusLists.title_tester_python_web_minus_list,
+            "dev_ios": MinusLists.title_dev_ios_minus_list,
+        }
+        self.name_suit = config["MAIN"]["name_suit"]
 
     def open(self, url):
         self.page.goto(url)
@@ -49,7 +54,7 @@ class BasePage:
         soup = bs(html, 'html.parser')
         table = soup.find('div', id='a11y-main-content')
         k = 0
-        index += 1 # Вместо индекса цифры поставить букву.
+        index += 100 # Вместо индекса цифры поставить букву.
         for i, ad in enumerate(table):
             try:
                 title = ad.find('a', class_='serp-item__title').text
@@ -80,14 +85,12 @@ class BasePage:
                 if compensation != "":
                     # print(self.processing_compensation(compensation))
                     compensation = self.processing_compensation(compensation)
-                self.vacancy_dict[key] = [title, compensation, href]
+                else:
+                    compensation = "0"
+                self.vacancy_dict[key] = [int(compensation), title, href]
                 k += 1
 
         # print(self.vacancy_dict)
-    #     processing compensation
-        comp = self.vacancy_dict.get("10")[1]
-        print(comp)
-        pass
     #         Sort
 
     # Save to file
@@ -109,6 +112,7 @@ class BasePage:
                             sum_string = sum_string[0:5]
                         break
         return sum_string
+
     @staticmethod
     def data_to_file(el1, el2, el3, el4):
         data = {
@@ -121,10 +125,9 @@ class BasePage:
             writer = csv.writer(f, delimiter=';', lineterminator='\n')
             writer.writerow((data['title'], data['schedule'], data['compensation'], data['href']))
 
-    @staticmethod
-    def title_filter(config, title) -> bool:
+    def title_filter(self, config, title) -> bool:
         pass
-        title_auto_tester_python_minus_list = MinusLists.title_auto_tester_python_minus_list
+        title_auto_tester_python_minus_list = self.minus_list_dict.get(self.name_suit)
         flag = True
         for minus_word in title_auto_tester_python_minus_list:
             if minus_word.lower() in title.lower():
@@ -136,7 +139,14 @@ class BasePage:
             return False
 
     def sort_and_save_results(self):
+        reverted_vacancy = {}
         # parsed = json.loads(str(self.vacancy_dict))
         # print(json.dumps(parsed, indent=4))
+        print(f"Всего вакансий {len(self.vacancy_dict)}")
         print(self.vacancy_dict)
+        sorted_vacancy = dict(sorted(self.vacancy_dict.items(), key=lambda item: item[1]))
+        assert len(self.vacancy_dict) == len(sorted_vacancy), "Сортировка произведена с ошибкой"
+        print(len(sorted_vacancy))
+        print(sorted_vacancy)
+
         pass

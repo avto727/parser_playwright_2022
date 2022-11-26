@@ -6,12 +6,13 @@ from pytest_bdd import given, parsers, when, then
 from tests.core.store import Store
 
 store = Store()
+schedule_dict = {"удаленка": "remote", "гибрид": "flexible", "удаленка+гибрид": "remote&schedule=flexible"}
 
 
-@given(parsers.parse("Open browser base_url keyword={keyword}"))
-def open_browser(config, base_page, keyword):
+@given(parsers.parse("Open browser base_url keyword={keyword} schedule={schedule_ru}"))
+def open_browser(config, base_page, keyword, schedule_ru):
     base_url = config["MAIN"]["url"]
-    schedule = config["tester_python_web"]["schedule"]
+    schedule = schedule_dict.get(schedule_ru)
     print(keyword)
     base_url.replace("schedule=", f"schedule={schedule}")
     base_page.open(f"{base_url}{keyword}")
@@ -37,8 +38,8 @@ def pages_processing(base_page, config):
     s_url = config["MAIN"]["search_url"]
 
     index = 0
-    # while index < total_pages:
-    while index < 2:
+    while index < total_pages:
+    # while index < 2:
         search_url = s_url.replace("text=1", f"text={keyword}").replace("page=1", f"page={index}")
         print(f"\nПроход по стр {index}")
         base_page.data_to_file(f"страница {index}", "", "", "")

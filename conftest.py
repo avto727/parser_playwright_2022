@@ -35,8 +35,8 @@ def client():
 
 
 @pytest.fixture
-def base_page(setup_browser):
-    yield BasePage(setup_browser)
+def base_page(config, setup_browser):
+    yield BasePage(config, setup_browser)
 
 
 class Device:
