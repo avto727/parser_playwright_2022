@@ -139,7 +139,6 @@ class BasePage:
             return False
 
     def sort_and_save_results(self):
-        reverted_vacancy = {}
         # parsed = json.loads(str(self.vacancy_dict))
         # print(json.dumps(parsed, indent=4))
         print(f"Всего вакансий {len(self.vacancy_dict)}")
@@ -148,5 +147,12 @@ class BasePage:
         assert len(self.vacancy_dict) == len(sorted_vacancy), "Сортировка произведена с ошибкой"
         print(len(sorted_vacancy))
         print(sorted_vacancy)
+        vacancy = {}
+        a = list(sorted_vacancy.keys())
+        b = a[::-1]
+        for i in range(len(a)):
+            vacancy.update({i: sorted_vacancy.get(b[i])})
+        print(vacancy)
+        assert len(vacancy) == len(sorted_vacancy), "Реверс произведен с ошибкой"
 
         pass
