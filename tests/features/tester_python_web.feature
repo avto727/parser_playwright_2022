@@ -10,4 +10,5 @@ Feature: tester_python_web
     When click Button_Всё_верно step 1
     When determinate total_pages to store
     When pages processing
-    When sort and save results
+    When sort results
+    When save results

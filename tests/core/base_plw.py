@@ -132,7 +132,7 @@ class BasePage:
             'compensation': el3,
             'href': el4
         }
-        with open('hh_2022.csv', 'a', encoding='utf-8-sig') as f:
+        with open('hh_2022_sort.csv', 'a', encoding='utf-8-sig') as f:
             writer = csv.writer(f, delimiter=';', lineterminator='\n')
             writer.writerow((data['title'], data['schedule'], data['compensation'], data['href']))
 
@@ -149,7 +149,7 @@ class BasePage:
         else:
             return False
 
-    def sort_and_save_results(self):
+    def sort_results(self):
         a = self.sorted_for_salary()
 
         # Фильтр по одинаковому заголовку. Проверка текста вакансии.
@@ -192,7 +192,7 @@ class BasePage:
                             text_summ2 += ""
 
                     if text_summ1 == text_summ2:
-                        count_deleted = self.delete_double_vacancy(context2, count_deleted, i, self.vacancy)
+                        count_deleted = self.delete_double_vacancy(context2, count_deleted, i)
                         break
                     context2.close()
         print(f"Удалено по одинаковому содержанию {count_deleted} вакансий.")
@@ -225,3 +225,12 @@ class BasePage:
         count_deleted += 1
         context2.close()
         return count_deleted
+
+    def save_results(self):
+        for i in range(len(self.vacancy_no_doubles)):
+            self.data_to_file(
+                self.vacancy_no_doubles.get(i)[1],
+                self.vacancy_no_doubles.get(i)[0],
+                self.vacancy_no_doubles.get(i)[2],
+                self.vacancy_no_doubles.get(i)[3]
+            )

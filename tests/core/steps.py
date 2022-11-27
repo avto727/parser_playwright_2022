@@ -49,6 +49,10 @@ def pages_processing(base_page, config):
         index = index + 1
         sleep(1.5)
 
-@when("sort and save results")
+@when("sort results")
 def sort_and_save_results(base_page):
-    base_page.sort_and_save_results()
+    base_page.sort_results()\
+
+@when("save results")
+def save_results(base_page):
+    base_page.save_results()
