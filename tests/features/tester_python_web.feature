@@ -10,5 +10,8 @@ Feature: tester_python_web
     When click Button_Всё_верно step 1
     When determinate total_pages to store
     When pages processing
-    When sort results
-    When save results
+    When sort salary and delete doubles
+    When save results in hh_2022_salary
+
+#    When sort for plus words
+#    When save results in hh_2022_plus_words

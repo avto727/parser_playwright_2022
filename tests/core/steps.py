@@ -49,10 +49,15 @@ def pages_processing(base_page, config):
         index = index + 1
         sleep(1.5)
 
-@when("sort results")
-def sort_and_save_results(base_page):
-    base_page.sort_results()\
+@when("sort salary and delete doubles")
+def sort_salary_and_delete_doubles(base_page):
+    base_page.sort_results()
 
-@when("save results")
-def save_results(base_page):
-    base_page.save_results()
+
+@when("sort for plus words")
+def sort_for_plus_words(base_page):
+    base_page.sort_for_plus_words()
+
+@when(parsers.parse("save results in {file_save_name}"))
+def save_results(base_page, file_save_name):
+    base_page.save_results(file_save_name)

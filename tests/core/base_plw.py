@@ -125,14 +125,14 @@ class BasePage:
         return sum_string
 
     @staticmethod
-    def data_to_file(el1, el2, el3, el4):
+    def data_to_file(file_save_name, el1, el2, el3, el4):
         data = {
             'title': el1,
             'schedule': el2,
             'compensation': el3,
             'href': el4
         }
-        with open('hh_2022_sort.csv', 'a', encoding='utf-8-sig') as f:
+        with open(f'{file_save_name}.csv', 'a', encoding='utf-8-sig') as f:
             writer = csv.writer(f, delimiter=';', lineterminator='\n')
             writer.writerow((data['title'], data['schedule'], data['compensation'], data['href']))
 
@@ -149,7 +149,7 @@ class BasePage:
         else:
             return False
 
-    def sort_results(self):
+    def sort_salary_and_delete_doubles(self):
         a = self.sorted_for_salary()
 
         # Фильтр по одинаковому заголовку. Проверка текста вакансии.
@@ -226,11 +226,15 @@ class BasePage:
         context2.close()
         return count_deleted
 
-    def save_results(self):
+    def save_results(self, file_save_name):
         for i in range(len(self.vacancy_no_doubles)):
             self.data_to_file(
+                file_save_name,
                 self.vacancy_no_doubles.get(i)[1],
                 self.vacancy_no_doubles.get(i)[0],
                 self.vacancy_no_doubles.get(i)[2],
                 self.vacancy_no_doubles.get(i)[3]
             )
+
+    def sort_for_plus_words(self):
+        pass
