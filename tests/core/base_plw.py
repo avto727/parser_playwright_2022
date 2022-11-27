@@ -13,6 +13,7 @@ class BasePage:
     path_project = "./"
 
     def __init__(self, config, setup_browser):
+        self.vacancy_no_doubles = {}
         self.page = setup_browser.page
         self.browser = setup_browser.browser
         self.elem = Elem()
@@ -26,7 +27,7 @@ class BasePage:
         self.name_suit = config["MAIN"]["name_suit"]
 
     def open(self, url):
-        self.page.goto(url)
+        self.page.goto(url, timeout=60000)
 
     def click(self, keyword, step):
         self.choose_selector(keyword).click()
@@ -54,6 +55,7 @@ class BasePage:
 
     def get_page_data(self, config, html, index):
         # выборка нужных данных
+        employer_red = ''
         soup = bs(html, 'html.parser')
         table = soup.find('div', id='a11y-main-content')
         k = 0
@@ -80,6 +82,10 @@ class BasePage:
                 href = ad.find('a', class_='serp-item__title').get('href').split("?")[0]
             except:
                 href = ''
+            try:
+                employer = ad.find('a', class_='bloko-link bloko-link_kind-tertiary').text
+            except:
+                employer = ''
             # Filters
             if self.title_filter(config, title):
                 key = f"{str(index)}{str(k)}"
@@ -90,7 +96,9 @@ class BasePage:
                     compensation = self.processing_compensation(compensation)
                 else:
                     compensation = "0"
-                self.vacancy_dict[key] = [int(compensation), title, href]
+                if employer.startswith("ООО"):
+                    employer_red = f"ООО {employer[4:]}"
+                self.vacancy_dict[key] = [int(compensation), title, href, employer_red]
                 k += 1
 
         # print(self.vacancy_dict)
@@ -142,56 +150,78 @@ class BasePage:
             return False
 
     def sort_and_save_results(self):
-        # сортировка по ЗП
-        print(f"Всего вакансий {len(self.vacancy_dict)}")
-        print(self.vacancy_dict)
-        sorted_vacancy = dict(sorted(self.vacancy_dict.items(), key=lambda item: item[1]))
-        assert len(self.vacancy_dict) == len(sorted_vacancy), "Сортировка произведена с ошибкой"
-        print(len(sorted_vacancy))
-        print(sorted_vacancy)
-        vacancy = {}
-        a = list(sorted_vacancy.keys())
-        b = a[::-1]
-        for i in range(len(a)):
-            vacancy.update({i: sorted_vacancy.get(b[i])})
-        print(vacancy)
-        assert len(vacancy) == len(sorted_vacancy), "Реверс произведен с ошибкой"
+        a = self.sorted_for_salary()
+
         # Фильтр по одинаковому заголовку. Проверка текста вакансии.
         count_deleted = 0
         for i in range(len(a)):
             j = i + 1
             for j in range(j, len(a)):
-                if vacancy.get(i)[1] == vacancy.get(j)[1]:
-                    print(vacancy.get(i)[1])
-                    print(vacancy.get(j)[1])
-                    self.page.goto(vacancy.get(i)[2])
-                    context2 = self.browser.new_context()
-                    page2 = context2.new_page()
-                    page2.goto(vacancy.get(j)[2])
+                s_i = self.vacancy.get(i)[1] + self.vacancy.get(i)[3]
+                s_j = self.vacancy.get(j)[1] + self.vacancy.get(j)[3]
+                if s_i == s_j:
+                    print(i, j, self.vacancy.get(i)[1])
+                    sleep(2)
+                    self.page.goto(self.vacancy.get(i)[2])
                     content1 = self.page.content()
                     soup1 = bs(content1, 'html.parser')
                     p_all1 = soup1.find('div', class_='g-user-content').find_all('p')
-                    # sleep(3)
                     text_summ1 = ""
                     for ind in range(3):
                         try:
                             text_summ1 += p_all1[ind].text
                         except:
                             continue
+
+                    context2 = self.browser.new_context()
+                    page2 = context2.new_page()
+                    page2.goto(self.vacancy.get(j)[2])
+                    sleep(2)
                     content2 = page2.content()
                     soup2 = bs(content2, 'html.parser')
-                    # sleep(3)
-                    p_all2 = soup2.find('div', class_='g-user-content').find_all('p')
                     text_summ2 = ""
+
+                    try:
+                        p_all2 = soup2.find('div', class_='g-user-content').find_all('p')
+                    except:
+                        print("      !!!    Текст со страницы не получен!!!")
                     for ind in range(3):
                         try:
                             text_summ2 += p_all2[ind].text
                         except:
-                            continue
-                    if text_summ1 == text_summ2:
-                        print(f"Delete vacancy key {i} url {vacancy.get(j)} ")
-                        count_deleted += 1
-                    else:
-                        context2.close()
+                            text_summ2 += ""
 
-            pass
+                    if text_summ1 == text_summ2:
+                        count_deleted = self.delete_double_vacancy(context2, count_deleted, i, self.vacancy)
+                        break
+                    context2.close()
+        print(f"Удалено по одинаковому содержанию {count_deleted} вакансий.")
+        print(self.vacancy)
+        for i, key in enumerate(self.vacancy):
+            self.vacancy_no_doubles[i] = self.vacancy.get(key)
+        print(self.vacancy_no_doubles)
+
+    def sorted_for_salary(self):
+        # сортировка по ЗП
+        print(f"Всего вакансий {len(self.vacancy_dict)}")
+        print(self.vacancy_dict)
+        self.sorted_vacancy = dict(sorted(self.vacancy_dict.items(), key=lambda item: item[1]))
+        assert len(self.vacancy_dict) == len(self.sorted_vacancy), "Сортировка произведена с ошибкой"
+        print(len(self.sorted_vacancy))
+        print(self.sorted_vacancy)
+        self.vacancy = {}
+        a = list(self.sorted_vacancy.keys())
+        b = a[::-1]
+        for i in range(len(a)):
+            self.vacancy.update({i: self.sorted_vacancy.get(b[i])})
+        print(self.vacancy)
+        assert len(self.vacancy) == len(self.sorted_vacancy), "Реверс произведен с ошибкой"
+        return a
+
+    def delete_double_vacancy(self, context2, count_deleted, i):
+        print(f"Delete vacancy key {i} url {self.vacancy.get(i)} ")
+        self.vacancy.pop(i)
+        print(len(self.vacancy))
+        count_deleted += 1
+        context2.close()
+        return count_deleted

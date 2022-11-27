@@ -47,6 +47,7 @@ def pages_processing(base_page, config):
         html = base_page.page.content()
         base_page.get_page_data(config, html, index)
         index = index + 1
+        sleep(1.5)
 
 @when("sort and save results")
 def sort_and_save_results(base_page):
