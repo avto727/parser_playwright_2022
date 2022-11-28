@@ -53,9 +53,9 @@ def sort_salary_and_delete_doubles(base_page):
     base_page.sort_salary_and_delete_doubles()
 
 
-@when("sort for plus words")
-def sort_for_plus_words(base_page):
-    base_page.sort_for_plus_words()
+@when("sort for plus words title")
+def sort_for_plus_words_title(base_page):
+    base_page.sort_for_plus_words_title()
 
 
 @when(parsers.parse("save results in {file_save_name}"))

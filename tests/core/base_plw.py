@@ -2,10 +2,12 @@
 import csv
 import json
 from time import sleep
+from dict_vacancy import vacancy as vac
 
 from bs4 import BeautifulSoup as bs
 
 from files.minus_lists import MinusLists
+from files.plus_lists import PlusLists
 from utils.elements import *
 
 
@@ -13,6 +15,7 @@ class BasePage:
     path_project = "./"
 
     def __init__(self, config, setup_browser):
+        self.vacancy_sort_title_plus = {}
         self.vacancy_no_doubles = {}
         self.page = setup_browser.page
         self.browser = setup_browser.browser
@@ -27,7 +30,7 @@ class BasePage:
         self.name_suit = config["MAIN"]["name_suit"]
 
     def open(self, url):
-        self.page.goto(url, timeout=60000)
+        self.page.goto(url, timeout=90000)
 
     def click(self, keyword, step):
         self.choose_selector(keyword).click()
@@ -162,7 +165,7 @@ class BasePage:
                 if s_i == s_j:
                     print(i, j, self.vacancy.get(i)[1])
                     sleep(2)
-                    self.page.goto(self.vacancy.get(i)[2])
+                    self.page.goto(self.vacancy.get(i)[2], timeout=90000)
                     content1 = self.page.content()
                     soup1 = bs(content1, 'html.parser')
                     p_all1 = soup1.find('div', class_='g-user-content').find_all('p')
@@ -175,7 +178,7 @@ class BasePage:
 
                     context2 = self.browser.new_context()
                     page2 = context2.new_page()
-                    page2.goto(self.vacancy.get(j)[2])
+                    page2.goto(self.vacancy.get(j)[2], timeout=90000)
                     sleep(2)
                     content2 = page2.content()
                     soup2 = bs(content2, 'html.parser')
@@ -235,6 +238,35 @@ class BasePage:
                 self.vacancy_no_doubles.get(i)[2],
                 self.vacancy_no_doubles.get(i)[3]
             )
-
-    def sort_for_plus_words(self):
+        vac = self.vacancy_no_doubles
         pass
+
+
+    def sort_for_plus_words_title(self):
+        vacancy_sort_title_plus = {}
+        plus_list = PlusLists().content_tester_python_web_plus_list
+        cou = 0
+        for plus_word in plus_list:
+            for i in range(len(vac)):
+                if vac.get(i)[4] == 1:
+                    continue
+                title = vac.get(i)[1].lower()
+                if plus_word.lower() in title:
+                    print(i, title)
+                    vacancy_sort_title_plus[cou] = vac.get(i)
+                    vac.get(i)[4] = 1
+                    cou += 1
+                    pass
+        print(cou, vacancy_sort_title_plus)
+        print(vac)
+        for l in range(len(vacancy_sort_title_plus)):
+            data_to_file(vacancy_sort_title_plus.get(l)[1], vacancy_sort_title_plus.get(l)[0],
+                         vacancy_sort_title_plus.get(l)[2], vacancy_sort_title_plus.get(l)[3])
+        #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
+        for i in range(len(vac)):
+            if vac.get(i)[4] == 1:
+                continue
+    #   1.Получить текст описания вакансии
+    #   2.Найти плюс слова. Если есть - запись и  vac.get(i)[4] = 1
+    #   3.Найти минус слова. Если есть - удалить вакансию
+    #   4.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.

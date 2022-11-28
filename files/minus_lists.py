@@ -63,7 +63,7 @@ class MinusLists:
         "Senior Software Engineer",
     ]
     content_tester_python_web_minus_list = [
-        "python",
+        "java",
 
     ]
     title_dev_ios_minus_list = [
