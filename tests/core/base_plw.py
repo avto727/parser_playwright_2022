@@ -2,7 +2,6 @@
 import csv
 import json
 from time import sleep
-from dict_vacancy import vacancy as vac
 
 from bs4 import BeautifulSoup as bs
 
@@ -44,7 +43,6 @@ class BasePage:
             res = el.last.all_inner_texts()[0]
         return res
 
-
     def choose_selector(self, keyword):
         selector = ""
         if self.xp.get(keyword) is not None:
@@ -62,7 +60,7 @@ class BasePage:
         soup = bs(html, 'html.parser')
         table = soup.find('div', id='a11y-main-content')
         k = 0
-        index += 100 # Вместо индекса цифры поставить букву.
+        index += 100  # Вместо индекса цифры поставить букву.
         for i, ad in enumerate(table):
             try:
                 title = ad.find('a', class_='serp-item__title').text
@@ -105,6 +103,7 @@ class BasePage:
                 k += 1
 
         # print(self.vacancy_dict)
+
     #         Sort
 
     # Save to file
@@ -165,7 +164,7 @@ class BasePage:
                 if s_i == s_j:
                     print(i, j, self.vacancy.get(i)[1])
                     sleep(2)
-                    self.page.goto(self.vacancy.get(i)[2], timeout=90000)
+                    self.page.goto(self.vacancy.get(i)[2], timeout=120000)
                     content1 = self.page.content()
                     soup1 = bs(content1, 'html.parser')
                     p_all1 = soup1.find('div', class_='g-user-content').find_all('p')
@@ -178,7 +177,7 @@ class BasePage:
 
                     context2 = self.browser.new_context()
                     page2 = context2.new_page()
-                    page2.goto(self.vacancy.get(j)[2], timeout=90000)
+                    page2.goto(self.vacancy.get(j)[2], timeout=120000)
                     sleep(2)
                     content2 = page2.content()
                     soup2 = bs(content2, 'html.parser')
@@ -241,32 +240,34 @@ class BasePage:
         vac = self.vacancy_no_doubles
         pass
 
-
     def sort_for_plus_words_title(self):
-        vacancy_sort_title_plus = {}
+        file_name = "sort_plus_hh_2022"
         plus_list = PlusLists().content_tester_python_web_plus_list
         cou = 0
         for plus_word in plus_list:
-            for i in range(len(vac)):
-                if vac.get(i)[4] == 1:
+            for i in range(len(self.vacancy_no_doubles)):
+                if self.vacancy_no_doubles.get(i)[4] == 1:
                     continue
-                title = vac.get(i)[1].lower()
+                title = self.vacancy_no_doubles.get(i)[1].lower()
                 if plus_word.lower() in title:
                     print(i, title)
-                    vacancy_sort_title_plus[cou] = vac.get(i)
-                    vac.get(i)[4] = 1
+                    self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
+                    self.vacancy_no_doubles.get(i)[4] = 1
                     cou += 1
                     pass
-        print(cou, vacancy_sort_title_plus)
-        print(vac)
-        for l in range(len(vacancy_sort_title_plus)):
-            data_to_file(vacancy_sort_title_plus.get(l)[1], vacancy_sort_title_plus.get(l)[0],
-                         vacancy_sort_title_plus.get(l)[2], vacancy_sort_title_plus.get(l)[3])
+        print(cou, self.vacancy_sort_title_plus)
+        print(self.vacancy_no_doubles)
+        for l in range(len(self.vacancy_sort_title_plus)):
+            self.data_to_file(file_name, self.vacancy_sort_title_plus.get(l)[1], self.vacancy_sort_title_plus.get(l)[0],
+                              self.vacancy_sort_title_plus.get(l)[2], self.vacancy_sort_title_plus.get(l)[3])
         #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
-        for i in range(len(vac)):
-            if vac.get(i)[4] == 1:
+        for i in range(len(self.vacancy_no_doubles)):
+            if self.vacancy_no_doubles.get(i)[4] == 1:
                 continue
-    #   1.Получить текст описания вакансии
+    #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
+            self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=90000)
+            content = self.page.content()
+
     #   2.Найти плюс слова. Если есть - запись и  vac.get(i)[4] = 1
     #   3.Найти минус слова. Если есть - удалить вакансию
     #   4.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
