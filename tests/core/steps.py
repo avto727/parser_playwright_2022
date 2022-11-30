@@ -58,6 +58,6 @@ def sort_for_plus_words_title(base_page):
     base_page.sort_for_plus_words_title()
 
 
-@when(parsers.parse("save results in {file_save_name}"))
-def save_results(base_page, file_save_name):
-    base_page.save_results(file_save_name)
+@when(parsers.parse("save results {dict_name} in {file_save_name}"))
+def save_results(base_page, dict_name, file_save_name):
+    base_page.save_results(dict_name, file_save_name)

@@ -228,14 +228,15 @@ class BasePage:
         context2.close()
         return count_deleted
 
-    def save_results(self, file_save_name):
-        for i in range(len(self.vacancy_no_doubles)):
+    def save_results(self, dict_name, file_save_name):
+        dd = {"vacancy_no_doubles": self.vacancy_no_doubles}
+        for i in range(len(dd.get(dict_name))):
             self.data_to_file(
                 file_save_name,
-                self.vacancy_no_doubles.get(i)[1],
-                self.vacancy_no_doubles.get(i)[0],
-                self.vacancy_no_doubles.get(i)[2],
-                self.vacancy_no_doubles.get(i)[3]
+                dd.get(dict_name).get(i)[1],
+                dd.get(dict_name).get(i)[0],
+                dd.get(dict_name).get(i)[2],
+                dd.get(dict_name).get(i)[3]
             )
         vac = self.vacancy_no_doubles
         pass
@@ -265,7 +266,7 @@ class BasePage:
             if self.vacancy_no_doubles.get(i)[4] == 1:
                 continue
     #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
-            self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=90000)
+            self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=120000)
             content = self.page.content()
 
     #   2.Найти плюс слова. Если есть - запись и  vac.get(i)[4] = 1
