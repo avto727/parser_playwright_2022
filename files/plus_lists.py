@@ -7,8 +7,8 @@ class PlusLists:
     ]
     content_tester_python_web_plus_list = [
         "python",
-        "auto",
         "авто",
+        "auto",
 
     ]
     title_dev_ios_minus_list = [

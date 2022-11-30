@@ -8,14 +8,16 @@ from bs4 import BeautifulSoup as bs
 from files.minus_lists import MinusLists
 from files.plus_lists import PlusLists
 from utils.elements import *
+from dict_vacancy import vacancy as vac # Remove
 
 
 class BasePage:
     path_project = "./"
+    vacancy_no_doubles = vac # Remove
 
     def __init__(self, config, setup_browser):
         self.vacancy_sort_title_plus = {}
-        self.vacancy_no_doubles = {}
+        # self.vacancy_no_doubles = {} # Uncomment !
         self.page = setup_browser.page
         self.browser = setup_browser.browser
         self.elem = Elem()
@@ -99,11 +101,12 @@ class BasePage:
                     compensation = "0"
                 if employer.startswith("ООО"):
                     employer_red = f"ООО {employer[4:]}"
-                self.vacancy_dict[key] = [int(compensation), title, href, employer_red]
+                flag = 0
+                self.vacancy_dict[key] = [int(compensation), title, href, employer_red, flag]
                 k += 1
 
-        # print(self.vacancy_dict)
-
+        print(self.vacancy_dict)
+        pass
     #         Sort
 
     # Save to file
@@ -238,11 +241,8 @@ class BasePage:
                 dd.get(dict_name).get(i)[2],
                 dd.get(dict_name).get(i)[3]
             )
-        vac = self.vacancy_no_doubles
-        pass
 
-    def sort_for_plus_words_title(self):
-        file_name = "sort_plus_hh_2022"
+    def sort_for_plus_words_title(self, file_name):
         plus_list = PlusLists().content_tester_python_web_plus_list
         cou = 0
         for plus_word in plus_list:
@@ -255,7 +255,6 @@ class BasePage:
                     self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                     self.vacancy_no_doubles.get(i)[4] = 1
                     cou += 1
-                    pass
         print(cou, self.vacancy_sort_title_plus)
         print(self.vacancy_no_doubles)
         for l in range(len(self.vacancy_sort_title_plus)):
@@ -263,12 +262,21 @@ class BasePage:
                               self.vacancy_sort_title_plus.get(l)[2], self.vacancy_sort_title_plus.get(l)[3])
         #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
         for i in range(len(self.vacancy_no_doubles)):
-            if self.vacancy_no_doubles.get(i)[4] == 1:
-                continue
-    #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
-            self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=120000)
-            content = self.page.content()
+            if self.vacancy_no_doubles.get(i)[4] == 0:
+        #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
+                self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=120000)
+                vacancy_text = self.page.locator("//div[contains(@class,'g-user-content')]").all_inner_texts()[0].lower()
+       #   2.Найти плюс слова. Если есть - запись и  vac.get(i)[4] = 1
+                if plus_list[0] in vacancy_text and plus_list[1] in vacancy_text:
+                    self.vacancy_no_doubles.get(i)[4] = 1
+                    self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
+                    cou += 1
+                    print(i, cou, self.vacancy_no_doubles.get(i), "sort content Plus word")
+                    continue
+                else:
+                    continue
+        print(cou, self.vacancy_sort_title_plus)
+        pass
 
-    #   2.Найти плюс слова. Если есть - запись и  vac.get(i)[4] = 1
-    #   3.Найти минус слова. Если есть - удалить вакансию
-    #   4.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
+        #   3.Найти минус слова. Если есть - удалить вакансию
+        #   4.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
