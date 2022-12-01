@@ -273,7 +273,7 @@ class BasePage:
                     continue
        #   2.Найти 2 плюс слова. Если есть - запись и  vac.get(i)[4] = 1
                 if plus_list[0] in vacancy_text and plus_list[1] in vacancy_text:
-                    self.vacancy_no_doubles.get(i)[4] = 1
+                    self.get_employer(cou, i)
                     self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                     cou += 1
                     print(i, cou, self.vacancy_no_doubles.get(i), "1 sort content Plus word")
@@ -292,7 +292,7 @@ class BasePage:
                     continue
                 for plus_word in plus_list:
                     if plus_word in vacancy_text in vacancy_text:
-                        self.vacancy_no_doubles.get(i)[4] = 1
+                        self.get_employer(cou, i)
                         self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                         cou += 1
                         print(i, cou, self.vacancy_no_doubles.get(i), "2 sort content Plus word")
@@ -305,3 +305,13 @@ class BasePage:
         print("Unsort dict")
         print(self.vacancy_no_doubles)
         pass
+
+    def get_employer(self, cou, i):
+        self.vacancy_no_doubles.get(i)[4] = 1
+        if self.vacancy_no_doubles.get(i)[3] == "":
+            xpath_e = "//span[contains(@class,'bloko-header-section-2 bloko-header-section-2_lite')]"
+            try:
+                self.vacancy_no_doubles.get(i)[3] = self.page.locator(xpath_e).all_inner_texts()[
+                    2].lower()
+            except:
+                print(i, cou, self.vacancy_no_doubles.get(i), "Не получен работодатель")
