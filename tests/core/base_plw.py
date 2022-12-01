@@ -311,7 +311,6 @@ class BasePage:
         if self.vacancy_no_doubles.get(i)[3] == "":
             xpath_e = "//span[contains(@class,'bloko-header-section-2 bloko-header-section-2_lite')]"
             try:
-                self.vacancy_no_doubles.get(i)[3] = self.page.locator(xpath_e).all_inner_texts()[
-                    2].lower()
+                self.vacancy_no_doubles.get(i)[3] = self.page.locator(xpath_e).all_inner_texts()[2].lower()
             except:
                 print(i, cou, self.vacancy_no_doubles.get(i), "Не получен работодатель")
