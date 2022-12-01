@@ -247,6 +247,7 @@ class BasePage:
 
     def sort_for_plus_words_title(self, file_name):
         plus_list = PlusLists().content_tester_python_web_plus_list
+        minus_list = MinusLists().content_tester_python_web_minus_list
         cou = 0
         for plus_word in plus_list:
             for i in range(len(self.vacancy_no_doubles)):
@@ -254,23 +255,26 @@ class BasePage:
                     continue
                 title = self.vacancy_no_doubles.get(i)[1].lower()
                 if plus_word.lower() in title:
-                    print(i, title)
-                    self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
-                    self.vacancy_no_doubles.get(i)[4] = 1
-                    cou += 1
+                    vacancy_text = self.get_vac_content(i, cou)
+                    if plus_list[0] in vacancy_text:
+                        print(i, title)
+                        self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
+                        self.vacancy_no_doubles.get(i)[4] = 1
+                        cou += 1
+                    else:
+                        for minus_word in minus_list:
+                            if minus_word in vacancy_text:
+                                self.vacancy_no_doubles.pop(i)
+                                print(f"Удалена вакансия {i} {self.vacancy_no_doubles.get(i)[1]} по минус слову")
         print(cou, self.vacancy_sort_title_plus)
+        # --------------------------------------------- нужна сортировка self.vacancy_no_doubles
         print(self.vacancy_no_doubles)
         self.save_results("vacancy_sort_title_plus", file_name)
         #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
         for i in range(len(self.vacancy_no_doubles)):
             if self.vacancy_no_doubles.get(i)[4] == 0:
         #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
-                self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=240000)
-                try:
-                    vacancy_text = self.page.locator("//div[contains(@class,'g-user-content')]").all_inner_texts()[0].lower()
-                except:
-                    print(i, cou, self.vacancy_no_doubles.get(i)[2])
-                    continue
+                vacancy_text = self.get_vac_content(i, cou)
        #   2.Найти 2 плюс слова. Если есть - запись и  vac.get(i)[4] = 1
                 if plus_list[0] in vacancy_text and plus_list[1] in vacancy_text:
                     self.get_employer(cou, i)
@@ -285,11 +289,7 @@ class BasePage:
         for i in range(len(self.vacancy_no_doubles)):
             if self.vacancy_no_doubles.get(i)[4] == 0:
                 self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=120000)
-                try:
-                    vacancy_text = self.page.locator(xpath_c).all_inner_texts()[0].lower()
-                except:
-                    print(i, cou, self.vacancy_no_doubles.get(i)[2])
-                    continue
+                vacancy_text = self.get_vac_content(i, cou)
                 for plus_word in plus_list:
                     if plus_word in vacancy_text in vacancy_text:
                         self.get_employer(cou, i)
@@ -314,3 +314,12 @@ class BasePage:
                 self.vacancy_no_doubles.get(i)[3] = self.page.locator(xpath_e).all_inner_texts()[2].lower()
             except:
                 print(i, cou, self.vacancy_no_doubles.get(i), "Не получен работодатель")
+
+    def get_vac_content(self, i, cou):
+        self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=240000)
+        try:
+            vacancy_text = self.page.locator("//div[contains(@class,'g-user-content')]").all_inner_texts()[0].lower()
+        except:
+            print(i, cou, self.vacancy_no_doubles.get(i)[2])
+            vacancy_text = ""
+        return vacancy_text
