@@ -232,7 +232,10 @@ class BasePage:
         return count_deleted
 
     def save_results(self, dict_name, file_save_name):
-        dd = {"vacancy_no_doubles": self.vacancy_no_doubles}
+        dd = {
+            "vacancy_no_doubles": self.vacancy_no_doubles,
+            "vacancy_sort_title_plus": self.vacancy_sort_title_plus,
+        }
         for i in range(len(dd.get(dict_name))):
             self.data_to_file(
                 file_save_name,
@@ -257,26 +260,41 @@ class BasePage:
                     cou += 1
         print(cou, self.vacancy_sort_title_plus)
         print(self.vacancy_no_doubles)
-        for l in range(len(self.vacancy_sort_title_plus)):
-            self.data_to_file(file_name, self.vacancy_sort_title_plus.get(l)[1], self.vacancy_sort_title_plus.get(l)[0],
-                              self.vacancy_sort_title_plus.get(l)[2], self.vacancy_sort_title_plus.get(l)[3])
+        self.save_results("vacancy_sort_title_plus", file_name)
         #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
         for i in range(len(self.vacancy_no_doubles)):
             if self.vacancy_no_doubles.get(i)[4] == 0:
         #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
-                self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=120000)
-                vacancy_text = self.page.locator("//div[contains(@class,'g-user-content')]").all_inner_texts()[0].lower()
-       #   2.Найти плюс слова. Если есть - запись и  vac.get(i)[4] = 1
+                self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=240000)
+                try:
+                    vacancy_text = self.page.locator("//div[contains(@class,'g-user-content')]").all_inner_texts()[0].lower()
+                except:
+                    print(i, cou, self.vacancy_no_doubles.get(i)[2])
+                    continue
+       #   2.Найти 2 плюс слова. Если есть - запись и  vac.get(i)[4] = 1
                 if plus_list[0] in vacancy_text and plus_list[1] in vacancy_text:
                     self.vacancy_no_doubles.get(i)[4] = 1
                     self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                     cou += 1
                     print(i, cou, self.vacancy_no_doubles.get(i), "sort content Plus word")
-                    continue
-                else:
-                    continue
-        print(cou, self.vacancy_sort_title_plus)
-        pass
 
+        print("1 transiton on content end")
+        print(cou, self.vacancy_sort_title_plus)
+        #   3.Найти хоть одно плюс слово в вакансии
+        xpath_c = "//div[contains(@class,'g-user-content')]"
+        for i in range(len(self.vacancy_no_doubles)):
+            if self.vacancy_no_doubles.get(i)[4] == 0:
+                self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=120000)
+                vacancy_text = self.page.locator(xpath_c).all_inner_texts()[0].lower()
+                for plus_word in plus_list:
+                    if plus_word in vacancy_text in vacancy_text:
+                        self.vacancy_no_doubles.get(i)[4] = 1
+                        self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
+                        cou += 1
+                        print(i, cou, self.vacancy_no_doubles.get(i), "sort content Plus word")
+                        break
+        print("2 transiton on content end")
+        print(cou, self.vacancy_sort_title_plus)
+        self.save_results("vacancy_sort_title_plus", "sort_content_hh")
         #   3.Найти минус слова. Если есть - удалить вакансию
         #   4.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
