@@ -8,16 +8,16 @@ from bs4 import BeautifulSoup as bs
 from files.minus_lists import MinusLists
 from files.plus_lists import PlusLists
 from utils.elements import *
-from dict_vacancy import vacancy as vac # Remove
+# from dict_vacancy import vacancy as vac # Remove
 
 
 class BasePage:
     path_project = "./"
-    vacancy_no_doubles = vac # Remove
+    # vacancy_no_doubles = vac # Remove
 
     def __init__(self, config, setup_browser):
         self.vacancy_sort_title_plus = {}
-        # self.vacancy_no_doubles = {} # Uncomment !
+        self.vacancy_no_doubles = {} # Uncomment ! don't remove
         self.page = setup_browser.page
         self.browser = setup_browser.browser
         self.elem = Elem()
@@ -276,7 +276,7 @@ class BasePage:
                     self.vacancy_no_doubles.get(i)[4] = 1
                     self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                     cou += 1
-                    print(i, cou, self.vacancy_no_doubles.get(i), "sort content Plus word")
+                    print(i, cou, self.vacancy_no_doubles.get(i), "1 sort content Plus word")
 
         print("1 transiton on content end")
         print(cou, self.vacancy_sort_title_plus)
@@ -285,16 +285,23 @@ class BasePage:
         for i in range(len(self.vacancy_no_doubles)):
             if self.vacancy_no_doubles.get(i)[4] == 0:
                 self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=120000)
-                vacancy_text = self.page.locator(xpath_c).all_inner_texts()[0].lower()
+                try:
+                    vacancy_text = self.page.locator(xpath_c).all_inner_texts()[0].lower()
+                except:
+                    print(i, cou, self.vacancy_no_doubles.get(i)[2])
+                    continue
                 for plus_word in plus_list:
                     if plus_word in vacancy_text in vacancy_text:
                         self.vacancy_no_doubles.get(i)[4] = 1
                         self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                         cou += 1
-                        print(i, cou, self.vacancy_no_doubles.get(i), "sort content Plus word")
+                        print(i, cou, self.vacancy_no_doubles.get(i), "2 sort content Plus word")
                         break
         print("2 transiton on content end")
         print(cou, self.vacancy_sort_title_plus)
         self.save_results("vacancy_sort_title_plus", "sort_content_hh")
         #   3.Найти минус слова. Если есть - удалить вакансию
         #   4.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
+        print("Unsort dict")
+        print(self.vacancy_no_doubles)
+        pass
