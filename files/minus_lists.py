@@ -64,7 +64,8 @@ class MinusLists:
     ]
     content_tester_python_web_minus_list = [
         "java",
-
+        "php",
+        "c#",
     ]
     title_dev_ios_minus_list = [
     "python",

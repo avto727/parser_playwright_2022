@@ -17,6 +17,7 @@ class BasePage:
 
     def __init__(self, config, setup_browser):
         self.vacancy_sort_title_plus = {}
+        self.intermediate_dict = {}
         self.vacancy_no_doubles = {} # Uncomment ! don't remove
         self.page = setup_browser.page
         self.browser = setup_browser.browser
@@ -170,12 +171,18 @@ class BasePage:
                     self.page.goto(self.vacancy.get(i)[2], timeout=120000)
                     content1 = self.page.content()
                     soup1 = bs(content1, 'html.parser')
-                    p_all1 = soup1.find('div', class_='g-user-content').find_all('p')
                     text_summ1 = ""
+                    # Изменить здесь: получить полностью всю страницу. Как в sort_for_plus_words_title
+                    # Далее брать первые 100 символов каждой вакансии и сравнивать.
+                    try:
+                        p_all1 = soup1.find('div', class_='g-user-content').find_all('p')
+                    except:
+                        p_all1 = None
                     for ind in range(3):
                         try:
                             text_summ1 += p_all1[ind].text
                         except:
+                            text_summ1 = ""
                             continue
 
                     context2 = self.browser.new_context()
@@ -256,18 +263,18 @@ class BasePage:
                 title = self.vacancy_no_doubles.get(i)[1].lower()
                 if plus_word.lower() in title:
                     vacancy_text = self.get_vac_content(i, cou)
+                    # ???? А может добавлять текст описания вакансии в выходной файл?
+                    # Тогда можно просматривать вакансии без перехода по ссылке?
                     if plus_list[0] in vacancy_text:
                         print(i, title)
                         self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                         self.vacancy_no_doubles.get(i)[4] = 1
                         cou += 1
-                    else:
-                        for minus_word in minus_list:
-                            if minus_word in vacancy_text:
-                                self.vacancy_no_doubles.pop(i)
-                                print(f"Удалена вакансия {i} {self.vacancy_no_doubles.get(i)[1]} по минус слову")
+                    else: # Плюс слова нет в заголовке. Проверяем есть ли минус слово в описании?
+                        self.check_content_for_minus_word(i, minus_list, vacancy_text)
+
         print(cou, self.vacancy_sort_title_plus)
-        # --------------------------------------------- нужна сортировка self.vacancy_no_doubles
+        self.intermediate_sorting()
         print(self.vacancy_no_doubles)
         self.save_results("vacancy_sort_title_plus", file_name)
         #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
@@ -297,6 +304,10 @@ class BasePage:
                         cou += 1
                         print(i, cou, self.vacancy_no_doubles.get(i), "2 sort content Plus word")
                         break
+                if self.vacancy_no_doubles.get(i)[4] == 0:
+                    self.check_content_for_minus_word(i, minus_list, vacancy_text)
+        self.intermediate_sorting()
+        #------------Здесь нужна проверка на минус слово. Если есть хоть одно минус слово, то вакансию удалить+сортировка
         print("2 transiton on content end")
         print(cou, self.vacancy_sort_title_plus)
         #   4.Найти минус слова. Если есть - удалить вакансию
@@ -313,6 +324,13 @@ class BasePage:
         print(self.vacancy_no_doubles)
 
         pass
+
+    def check_content_for_minus_word(self, i, minus_list, vacancy_text):
+        for minus_word in minus_list:
+            if minus_word in vacancy_text:  # Если есть минус слово, то удаляем вакансию совсем.
+                print(f"Удалена вакансия {i} {self.vacancy_no_doubles.get(i)[1]} по минус слову")
+                self.vacancy_no_doubles.pop(i)
+                break
 
     def get_employer(self, cou, i):
         self.vacancy_no_doubles.get(i)[4] = 1
@@ -331,3 +349,9 @@ class BasePage:
             print(i, cou, self.vacancy_no_doubles.get(i)[2])
             vacancy_text = ""
         return vacancy_text
+
+    def intermediate_sorting(self):
+        for i, key in enumerate(self.vacancy_no_doubles):
+            self.intermediate_dict[i] = self.vacancy_no_doubles.get(key)
+        self.vacancy_no_doubles = {}
+        self.vacancy_no_doubles = self.intermediate_dict
