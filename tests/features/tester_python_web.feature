@@ -15,4 +15,6 @@ Feature: tester_python_web
 #    When sort for plus words title save to sort_plus_title_hh_2022
 
     When sort for plus words description vacancy
-    When save results vacancy_sort_title_plus in hh_2022_plus_words_description
+    When save results vacancy_sort_title_plus in long_hh_2022_plus_words_description
+#    When for plus_list vacancy_sort_title_plus
+#    When save results vacancy_sort_title_plus in short_hh_2022_plus_words_description
