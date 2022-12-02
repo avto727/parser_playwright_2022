@@ -55,9 +55,18 @@ def sort_salary_and_delete_doubles(base_page):
 
 @when(parsers.parse("sort for plus words title save to {file_name}"))
 def sort_for_plus_words_title(base_page, file_name):
-    base_page.sort_for_plus_words_title(file_name)
+    cou = base_page.sort_for_plus_words_title(file_name)
+    store["cou"] = cou
+
+
 
 
 @when(parsers.parse("save results {dict_name} in {file_save_name}"))
 def save_results(base_page, dict_name, file_save_name):
     base_page.save_results(dict_name, file_save_name)
+
+
+@when("sort for plus words description vacancy")
+def sort_for_plus_words_in_content(base_page):
+    cou = store["cou"]
+    base_page.sort_for_plus_words_in_content(cou)

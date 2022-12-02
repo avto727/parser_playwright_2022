@@ -34,6 +34,8 @@ class BasePage:
             "tester_python_web": MinusLists.title_tester_python_web_minus_list,
             "dev_ios": MinusLists.title_dev_ios_minus_list,
         }
+        self.content_plus_list = PlusLists().content_tester_python_web_plus_list
+        self.content_minus_list = MinusLists().content_tester_python_web_minus_list
         self.name_suit = config["MAIN"]["name_suit"]
 
     def open(self, url):
@@ -258,10 +260,8 @@ class BasePage:
             )
 
     def sort_for_plus_words_title(self, file_name):
-        plus_list = PlusLists().content_tester_python_web_plus_list
-        minus_list = MinusLists().content_tester_python_web_minus_list
         cou = 0
-        for plus_word in plus_list:
+        for plus_word in self.content_plus_list:
             for i in range(len(self.vacancy_no_doubles)):
                 if self.vacancy_no_doubles.get(i)[4] == 1:
                     continue
@@ -270,25 +270,28 @@ class BasePage:
                     vacancy_text = self.get_vac_content(i, cou)
                     """ ???? А может добавлять текст описания вакансии в выходной файл?
                              Тогда можно просматривать вакансии без перехода по ссылке?"""
-                    if plus_list[0] in vacancy_text:
+                    if self.content_plus_list[0] in vacancy_text:
                         print(i, title)
                         self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                         self.vacancy_no_doubles.get(i)[4] = 1
                         cou += 1
                     else:  # Плюс слова нет в заголовке. Проверяем есть ли минус слово в описании?
-                        self.check_content_for_minus_word(i, minus_list, vacancy_text)
+                        self.check_content_for_minus_word(i, vacancy_text)
 
         print(cou, self.vacancy_sort_title_plus)
         self.intermediate_sorting()
         print(self.vacancy_no_doubles)
         self.save_results("vacancy_sort_title_plus", file_name)
+        return cou
         #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
+
+    def sort_for_plus_words_in_content(self, cou):
         for i in range(len(self.vacancy_no_doubles)):
             if self.vacancy_no_doubles.get(i)[4] == 0:
                 #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
                 vacancy_text = self.get_vac_content(i, cou)
                 #   2.Найти 2 плюс слова. Если есть - запись и  vac.get(i)[4] = 1
-                if plus_list[0] in vacancy_text and plus_list[1] in vacancy_text:
+                if self.content_plus_list[0] in vacancy_text and self.content_plus_list[1] in vacancy_text:
                     self.get_employer(cou, i)
                     self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                     cou += 1
@@ -302,7 +305,7 @@ class BasePage:
             if self.vacancy_no_doubles.get(i)[4] == 0:
                 self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=120000)
                 vacancy_text = self.get_vac_content(i, cou)
-                for plus_word in plus_list:
+                for plus_word in self.content_plus_list:
                     if plus_word in vacancy_text in vacancy_text:
                         self.get_employer(cou, i)
                         self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
@@ -310,7 +313,7 @@ class BasePage:
                         print(i, cou, self.vacancy_no_doubles.get(i), "2 sort content Plus word")
                         break
                 if self.vacancy_no_doubles.get(i)[4] == 0:
-                    self.check_content_for_minus_word(i, minus_list, vacancy_text)
+                    self.check_content_for_minus_word(i, vacancy_text)
         self.intermediate_sorting()
         print("2 transiton on content end")
         print(cou, self.vacancy_sort_title_plus)
@@ -329,8 +332,8 @@ class BasePage:
 
         pass
 
-    def check_content_for_minus_word(self, i, minus_list, vacancy_text):
-        for minus_word in minus_list:
+    def check_content_for_minus_word(self, i, vacancy_text):
+        for minus_word in self.content_minus_list:
             if minus_word in vacancy_text:  # Если есть минус слово, то удаляем вакансию совсем.
                 print(f"Удалена вакансия {i} {self.vacancy_no_doubles.get(i)[1]} по минус слову")
                 self.vacancy_no_doubles.pop(i)
