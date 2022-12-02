@@ -164,52 +164,23 @@ class BasePage:
             return False
 
     def sort_salary_and_delete_doubles(self):
-        a = self.sorted_for_salary()
-
+        count_sorted_dict = self.sorted_for_salary()
         # Фильтр по одинаковому заголовку. Проверка текста вакансии.
         count_deleted = 0
-        for i in range(len(a)):
+        for i in range(count_sorted_dict):
             j = i + 1
-            for j in range(j, len(a)):
+            for j in range(j, count_sorted_dict):
                 s_i = self.vacancy.get(i)[1] + self.vacancy.get(i)[3]
                 s_j = self.vacancy.get(j)[1] + self.vacancy.get(j)[3]
                 if s_i == s_j:
                     print(i, j, self.vacancy.get(i)[1])
                     sleep(2)
                     self.page.goto(self.vacancy.get(i)[2], timeout=120000)
-                    content1 = self.page.content()
-                    soup1 = bs(content1, 'html.parser')
-                    text_summ1 = ""
-                    # Изменить здесь: получить полностью всю страницу. Как в sort_for_plus_words_title
-                    # Далее брать первые 100 символов каждой вакансии и сравнивать.
-                    try:
-                        p_all1 = soup1.find('div', class_='g-user-content').find_all('p')
-                    except:
-                        p_all1 = None
-                    for ind in range(3):
-                        try:
-                            text_summ1 += p_all1[ind].text
-                        except:
-                            text_summ1 = ""
-                            continue
+                    text_summ1 = self.get_vac_content(self.page, i, j, self.vacancy.get(i)[2])[:500]
 
                     context2 = self.browser.new_context()
                     page2 = context2.new_page()
-                    page2.goto(self.vacancy.get(j)[2], timeout=120000)
-                    sleep(2)
-                    content2 = page2.content()
-                    soup2 = bs(content2, 'html.parser')
-                    text_summ2 = ""
-
-                    try:
-                        p_all2 = soup2.find('div', class_='g-user-content').find_all('p')
-                    except:
-                        print("      !!!    Текст со страницы не получен!!!")
-                    for ind in range(3):
-                        try:
-                            text_summ2 += p_all2[ind].text
-                        except:
-                            text_summ2 += ""
+                    text_summ2 = self.get_vac_content(page2, i, j, self.vacancy.get(i)[2])[:500]
 
                     if text_summ1 == text_summ2:
                         count_deleted = self.delete_double_vacancy(context2, count_deleted, i)
@@ -235,7 +206,7 @@ class BasePage:
             self.vacancy.update({i: self.sorted_vacancy.get(b[i])})
         print(self.vacancy)
         assert len(self.vacancy) == len(self.sorted_vacancy), "Реверс произведен с ошибкой"
-        return a
+        return len(a)
 
     def delete_double_vacancy(self, context2, count_deleted, i):
         print(f"Delete vacancy key {i} url {self.vacancy.get(i)} ")
@@ -269,7 +240,7 @@ class BasePage:
                 if "python" in title or "Python" in title:
                     print(self.vacancy_no_doubles.get(i)[1].lower())
                 if plus_word.lower() in title:
-                    vacancy_text = self.get_vac_content(i, cou)
+                    vacancy_text = self.get_vac_content(self.page, i, cou, self.vacancy_no_doubles.get(i)[2])
                     """ ???? А может добавлять текст описания вакансии в выходной файл?
                              Тогда можно просматривать вакансии без перехода по ссылке?"""
                     if self.content_plus_list[0] in vacancy_text:
@@ -291,7 +262,7 @@ class BasePage:
         for i in range(len(self.vacancy_no_doubles)):
             if self.vacancy_no_doubles.get(i)[4] == 0:
                 #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
-                vacancy_text = self.get_vac_content(i, cou)
+                vacancy_text = self.get_vac_content(self.page, i, cou, self.vacancy_no_doubles.get(i)[2])
                 #   2.Найти 2 плюс слова. Если есть - запись и  vac.get(i)[4] = 1
                 if self.content_plus_list[0] in vacancy_text and self.content_plus_list[1] in vacancy_text:
                     self.get_employer(cou, i)
@@ -305,8 +276,7 @@ class BasePage:
         xpath_c = "//div[contains(@class,'g-user-content')]"
         for i in range(len(self.vacancy_no_doubles)):
             if self.vacancy_no_doubles.get(i)[4] == 0:
-                self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=120000)
-                vacancy_text = self.get_vac_content(i, cou)
+                vacancy_text = self.get_vac_content(self.page, i, cou, self.vacancy_no_doubles.get(i)[2])
                 for plus_word in self.content_plus_list:
                     if plus_word in vacancy_text in vacancy_text:
                         self.get_employer(cou, i)
@@ -349,8 +319,8 @@ class BasePage:
             except:
                 print(i, cou, self.vacancy_no_doubles.get(i), "Не получен работодатель")
 
-    def get_vac_content(self, i, cou):
-        self.page.goto(self.vacancy_no_doubles.get(i)[2], timeout=240000)
+    def get_vac_content(self, page, i: int, cou: int, url: str) -> str:
+        page.goto(url, timeout=240000)
         try:
             vacancy_text = self.page.locator("//div[contains(@class,'g-user-content')]").all_inner_texts()[0].lower()
         except:
