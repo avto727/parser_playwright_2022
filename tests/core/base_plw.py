@@ -266,6 +266,8 @@ class BasePage:
                 if self.vacancy_no_doubles.get(i)[4] == 1:
                     continue
                 title = self.vacancy_no_doubles.get(i)[1].lower()
+                if "python" in title or "Python" in title:
+                    print(self.vacancy_no_doubles.get(i)[1].lower())
                 if plus_word.lower() in title:
                     vacancy_text = self.get_vac_content(i, cou)
                     """ ???? А может добавлять текст описания вакансии в выходной файл?
@@ -315,7 +317,7 @@ class BasePage:
                 if self.vacancy_no_doubles.get(i)[4] == 0:
                     self.check_content_for_minus_word(i, vacancy_text)
         self.intermediate_sorting()
-        print("2 transiton on content end")
+        print("2 transition on content end")
         print(cou, self.vacancy_sort_title_plus)
         #   4.Найти минус слова. Если есть - удалить вакансию
         #   5.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
@@ -325,7 +327,6 @@ class BasePage:
             if self.vacancy_no_doubles.get(i)[4] == 0:
                 self.vacancy_no_doubles.get(i)[4] = 1
                 self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
-                self.save_results("vacancy_sort_title_plus", "sort_content_hh")
 
         print("Unsort dict")
         print(self.vacancy_no_doubles)
