@@ -11,12 +11,14 @@ from utils.elements import *
 
 
 from dict_vacancy import vacancy as vac # Remove
+from dict_sort_plus import sort as sort # Remove
 
 
 class BasePage:
     path_project = "./"
 
-    vacancy_no_doubles = vac # Remove
+    vacancy_no_doubles = vac  # Remove
+    vacancy_sort_title_plus = sort  # Remove
 
     def __init__(self, config, setup_browser):
         self.vacancy_sort_title_plus = {}
@@ -239,8 +241,6 @@ class BasePage:
                 if self.vacancy_no_doubles.get(i)[4] == 1:
                     continue
                 title = self.vacancy_no_doubles.get(i)[1].lower()
-                # if "python" in title or "Python" in title:
-                #     print(self.vacancy_no_doubles.get(i)[1].lower())
                 if plus_word.lower() in title:
                     vacancy_text = self.get_vac_content(self.page, i, cou, self.vacancy_no_doubles.get(i)[2])
                     """ ???? А может добавлять текст описания вакансии в выходной файл?
@@ -256,6 +256,7 @@ class BasePage:
         self.intermediate_sorting()
         print(self.vacancy_no_doubles)
         self.save_results("vacancy_sort_title_plus", file_name)
+        print("PASS STEP 'When sort for plus words title save to sort_plus_title_hh_2022'")
         return cou
         #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
 
@@ -272,6 +273,7 @@ class BasePage:
                     print(i, cou, self.vacancy_no_doubles.get(i), "1 sort content Plus word")
 
         print("1 transiton on content end")
+        print(self.vacancy_no_doubles)
         print(cou, self.vacancy_sort_title_plus)
         #   3.Найти хоть одно плюс слово в вакансии
         xpath_c = "//div[contains(@class,'g-user-content')]"
@@ -289,6 +291,7 @@ class BasePage:
                     self.check_content_for_minus_word(i, vacancy_text)
         self.intermediate_sorting()
         print("2 transition on content end")
+        print(self.vacancy_no_doubles)
         print(cou, self.vacancy_sort_title_plus)
         #   4.Найти минус слова. Если есть - удалить вакансию
         #   5.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
@@ -298,7 +301,7 @@ class BasePage:
             if self.vacancy_no_doubles.get(i)[4] == 0:
                 self.vacancy_no_doubles.get(i)[4] = 1
                 self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
-
+                cou += 1
         print("Unsort dict")
         print(self.vacancy_no_doubles)
 
@@ -334,6 +337,7 @@ class BasePage:
         return vacancy_text
 
     def intermediate_sorting(self):
+        self.intermediate_dict = {}
         for i, key in enumerate(self.vacancy_no_doubles):
             self.intermediate_dict[i] = self.vacancy_no_doubles.get(key)
         self.vacancy_no_doubles = {}

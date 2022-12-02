@@ -12,7 +12,7 @@ Feature: tester_python_web
 #    When sort salary and delete doubles
 #    When save results vacancy_no_doubles in hh_2022_salary
 
-    When sort for plus words title save to sort_plus_title_hh_2022
+#    When sort for plus words title save to sort_plus_title_hh_2022
 
     When sort for plus words description vacancy
     When save results vacancy_sort_title_plus in hh_2022_plus_words_description
