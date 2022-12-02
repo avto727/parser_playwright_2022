@@ -8,17 +8,22 @@ from bs4 import BeautifulSoup as bs
 from files.minus_lists import MinusLists
 from files.plus_lists import PlusLists
 from utils.elements import *
+
+
 # from dict_vacancy import vacancy as vac # Remove
 
 
 class BasePage:
     path_project = "./"
+
     # vacancy_no_doubles = vac # Remove
 
     def __init__(self, config, setup_browser):
         self.vacancy_sort_title_plus = {}
         self.intermediate_dict = {}
-        self.vacancy_no_doubles = {} # Uncomment ! don't remove
+        self.vacancy = {}
+        self.sorted_vacancy = {}
+        self.vacancy_no_doubles = {}  # Uncomment ! don't remove
         self.page = setup_browser.page
         self.browser = setup_browser.browser
         self.elem = Elem()
@@ -108,6 +113,7 @@ class BasePage:
 
         print(self.vacancy_dict)
         pass
+
     #         Sort
 
     # Save to file
@@ -221,7 +227,6 @@ class BasePage:
         assert len(self.vacancy_dict) == len(self.sorted_vacancy), "Сортировка произведена с ошибкой"
         print(len(self.sorted_vacancy))
         print(self.sorted_vacancy)
-        self.vacancy = {}
         a = list(self.sorted_vacancy.keys())
         b = a[::-1]
         for i in range(len(a)):
@@ -263,14 +268,14 @@ class BasePage:
                 title = self.vacancy_no_doubles.get(i)[1].lower()
                 if plus_word.lower() in title:
                     vacancy_text = self.get_vac_content(i, cou)
-                    # ???? А может добавлять текст описания вакансии в выходной файл?
-                    # Тогда можно просматривать вакансии без перехода по ссылке?
+                    """ ???? А может добавлять текст описания вакансии в выходной файл?
+                             Тогда можно просматривать вакансии без перехода по ссылке?"""
                     if plus_list[0] in vacancy_text:
                         print(i, title)
                         self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                         self.vacancy_no_doubles.get(i)[4] = 1
                         cou += 1
-                    else: # Плюс слова нет в заголовке. Проверяем есть ли минус слово в описании?
+                    else:  # Плюс слова нет в заголовке. Проверяем есть ли минус слово в описании?
                         self.check_content_for_minus_word(i, minus_list, vacancy_text)
 
         print(cou, self.vacancy_sort_title_plus)
@@ -280,9 +285,9 @@ class BasePage:
         #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
         for i in range(len(self.vacancy_no_doubles)):
             if self.vacancy_no_doubles.get(i)[4] == 0:
-        #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
+                #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
                 vacancy_text = self.get_vac_content(i, cou)
-       #   2.Найти 2 плюс слова. Если есть - запись и  vac.get(i)[4] = 1
+                #   2.Найти 2 плюс слова. Если есть - запись и  vac.get(i)[4] = 1
                 if plus_list[0] in vacancy_text and plus_list[1] in vacancy_text:
                     self.get_employer(cou, i)
                     self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
@@ -307,7 +312,6 @@ class BasePage:
                 if self.vacancy_no_doubles.get(i)[4] == 0:
                     self.check_content_for_minus_word(i, minus_list, vacancy_text)
         self.intermediate_sorting()
-        #------------Здесь нужна проверка на минус слово. Если есть хоть одно минус слово, то вакансию удалить+сортировка
         print("2 transiton on content end")
         print(cou, self.vacancy_sort_title_plus)
         #   4.Найти минус слова. Если есть - удалить вакансию
@@ -355,3 +359,4 @@ class BasePage:
             self.intermediate_dict[i] = self.vacancy_no_doubles.get(key)
         self.vacancy_no_doubles = {}
         self.vacancy_no_doubles = self.intermediate_dict
+        print("intermediate_sorting done")
