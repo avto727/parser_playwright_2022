@@ -299,11 +299,19 @@ class BasePage:
                         break
         print("2 transiton on content end")
         print(cou, self.vacancy_sort_title_plus)
-        self.save_results("vacancy_sort_title_plus", "sort_content_hh")
-        #   3.Найти минус слова. Если есть - удалить вакансию
-        #   4.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
+        #   4.Найти минус слова. Если есть - удалить вакансию
+        #   5.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
+
+        #   6.Добивка файла оставшимися вакансиями не сортированными.
+        for i in range(len(self.vacancy_no_doubles)):
+            if self.vacancy_no_doubles.get(i)[4] == 0:
+                self.vacancy_no_doubles.get(i)[4] = 1
+                self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
+                self.save_results("vacancy_sort_title_plus", "sort_content_hh")
+
         print("Unsort dict")
         print(self.vacancy_no_doubles)
+
         pass
 
     def get_employer(self, cou, i):
