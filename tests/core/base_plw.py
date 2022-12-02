@@ -10,20 +10,20 @@ from files.plus_lists import PlusLists
 from utils.elements import *
 
 
-# from dict_vacancy import vacancy as vac # Remove
+from dict_vacancy import vacancy as vac # Remove
 
 
 class BasePage:
     path_project = "./"
 
-    # vacancy_no_doubles = vac # Remove
+    vacancy_no_doubles = vac # Remove
 
     def __init__(self, config, setup_browser):
         self.vacancy_sort_title_plus = {}
         self.intermediate_dict = {}
         self.vacancy = {}
         self.sorted_vacancy = {}
-        self.vacancy_no_doubles = {}  # Uncomment ! don't remove
+        # self.vacancy_no_doubles = {}  # Uncomment ! don't remove
         self.page = setup_browser.page
         self.browser = setup_browser.browser
         self.elem = Elem()
@@ -234,23 +234,24 @@ class BasePage:
         cou = 0
         for plus_word in self.content_plus_list:
             for i in range(len(self.vacancy_no_doubles)):
+                if self.vacancy_no_doubles.get(i) == None:
+                    continue
                 if self.vacancy_no_doubles.get(i)[4] == 1:
                     continue
                 title = self.vacancy_no_doubles.get(i)[1].lower()
-                if "python" in title or "Python" in title:
-                    print(self.vacancy_no_doubles.get(i)[1].lower())
+                # if "python" in title or "Python" in title:
+                #     print(self.vacancy_no_doubles.get(i)[1].lower())
                 if plus_word.lower() in title:
                     vacancy_text = self.get_vac_content(self.page, i, cou, self.vacancy_no_doubles.get(i)[2])
                     """ ???? А может добавлять текст описания вакансии в выходной файл?
                              Тогда можно просматривать вакансии без перехода по ссылке?"""
                     if self.content_plus_list[0] in vacancy_text:
-                        print(i, title)
+                        print(i, title, "Vacancy add to sort_title")
                         self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                         self.vacancy_no_doubles.get(i)[4] = 1
                         cou += 1
                     else:  # Плюс слова нет в заголовке. Проверяем есть ли минус слово в описании?
                         self.check_content_for_minus_word(i, vacancy_text)
-
         print(cou, self.vacancy_sort_title_plus)
         self.intermediate_sorting()
         print(self.vacancy_no_doubles)
@@ -321,11 +322,15 @@ class BasePage:
 
     def get_vac_content(self, page, i: int, cou: int, url: str) -> str:
         page.goto(url, timeout=240000)
-        try:
-            vacancy_text = self.page.locator("//div[contains(@class,'g-user-content')]").all_inner_texts()[0].lower()
-        except:
-            print(i, cou, self.vacancy_no_doubles.get(i)[2])
-            vacancy_text = ""
+        tmpl = self.page.locator("//div[contains(@class,'tmpl_hh_wrapper')]").all_inner_texts()
+        if not tmpl:
+            try:
+                vacancy_text = self.page.locator("//div[contains(@class,'g-user-content')]").all_inner_texts()[0].lower()
+            except:
+                print(i, cou, self.vacancy_no_doubles.get(i)[2])
+                vacancy_text = ""
+        else:
+            vacancy_text = tmpl[0].lower()
         return vacancy_text
 
     def intermediate_sorting(self):
