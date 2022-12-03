@@ -36,6 +36,10 @@ class BasePage:
             "tester_python_web": MinusLists.title_tester_python_web_minus_list,
             "dev_ios": MinusLists.title_dev_ios_minus_list,
         }
+        self.dd = {
+            "vacancy_no_doubles": self.vacancy_no_doubles,
+            "vacancy_sort_title_plus": self.vacancy_sort_title_plus,
+        }
         self.content_plus_list = PlusLists().content_tester_python_web_plus_list
         self.content_minus_list = MinusLists().content_tester_python_web_minus_list
         self.name_suit = config["MAIN"]["name_suit"]
@@ -219,17 +223,16 @@ class BasePage:
         return count_deleted
 
     def save_results(self, dict_name, file_save_name):
-        dd = {
-            "vacancy_no_doubles": self.vacancy_no_doubles,
-            "vacancy_sort_title_plus": self.vacancy_sort_title_plus,
-        }
-        for i in range(len(dd.get(dict_name))):
+        for i in range(len(self.dd.get(dict_name))):
+            print(i)
+            if i == 123:
+                pass
             self.data_to_file(
                 file_save_name,
-                dd.get(dict_name).get(i)[1],
-                dd.get(dict_name).get(i)[0],
-                dd.get(dict_name).get(i)[2],
-                dd.get(dict_name).get(i)[3]
+                self.dd.get(dict_name).get(i)[1],
+                self.dd.get(dict_name).get(i)[0],
+                self.dd.get(dict_name).get(i)[2],
+                self.dd.get(dict_name).get(i)[3]
             )
 
     def sort_for_plus_words_title(self, file_name):
@@ -252,8 +255,9 @@ class BasePage:
                         cou += 1
                     else:  # Плюс слова нет в заголовке. Проверяем есть ли минус слово в описании?
                         self.check_content_for_minus_word(i, vacancy_text)
+        self.intermediate_sorting("vacancy_sort_title_plus")
+        self.intermediate_sorting("vacancy_no_doubles")
         print(cou, self.vacancy_sort_title_plus)
-        self.intermediate_sorting()
         print(self.vacancy_no_doubles)
         self.save_results("vacancy_sort_title_plus", file_name)
         print("PASS STEP 'When sort for plus words title save to sort_plus_title_hh_2022'")
@@ -261,7 +265,7 @@ class BasePage:
         #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
 
     def sort_for_plus_words_in_content(self, cou):
-        cou = int(cou)
+        # cou = int(cou)
         # for i in range(len(self.vacancy_no_doubles)):
         #     if self.vacancy_no_doubles.get(i)[4] == 0:
         #         #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
@@ -290,22 +294,24 @@ class BasePage:
         #                 break
         #         if self.vacancy_no_doubles.get(i)[4] == 0:
         #             self.check_content_for_minus_word(i, vacancy_text)
-        # self.intermediate_sorting()
-        print("2 transition on content end")
-        print(self.vacancy_no_doubles)
-        print(cou, self.vacancy_sort_title_plus)
-        #   4.Найти минус слова. Если есть - удалить вакансию
-        #   5.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
-
-        #   6.Добивка файла оставшимися вакансиями не сортированными.
-        for i in range(len(self.vacancy_no_doubles)):
-            if self.vacancy_no_doubles.get(i)[4] == 0:
-                self.vacancy_no_doubles.get(i)[4] = 1
-                self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
-                cou += 1
-        print("Unsort dict")
+        # self.intermediate_sorting("vacancy_no_doubles")
+        # self.intermediate_sorting("vacancy_sort_title_plus")
+        # print("2 transition on content end")
+        # print(self.vacancy_no_doubles)
+        # print(cou, self.vacancy_sort_title_plus)
+        # #   4.Найти минус слова. Если есть - удалить вакансию
+        # #   5.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
+        #
+        # #   6.Добивка файла оставшимися вакансиями не сортированными.
+        # for i in range(len(self.vacancy_no_doubles)):
+        #     if self.vacancy_no_doubles.get(i)[4] == 0:
+        #         self.vacancy_no_doubles.get(i)[4] = 1
+        #         self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
+        #         cou += 1
+        # print("Unsort dict")
         print(self.vacancy_no_doubles)
         print(self.vacancy_sort_title_plus)
+        self.intermediate_sorting("vacancy_sort_title_plus")
 
         pass
 
@@ -338,21 +344,30 @@ class BasePage:
             vacancy_text = tmpl[0].lower()
         return vacancy_text
 
-    def intermediate_sorting(self):
+    def intermediate_sorting(self, dict_name: str):
+        dictionary = {}
+        if dict_name == "vacancy_no_doubles":
+            dictionary = self.vacancy_no_doubles
+            print("vacancy_no_doubles before", self.vacancy_no_doubles)
+        elif dict_name == "vacancy_sort_title_plus":
+            dictionary = self.vacancy_sort_title_plus
+            print("vacancy_sort_title_plus before", self.vacancy_sort_title_plus)
         self.intermediate_dict = {}
-        for i, key in enumerate(self.vacancy_no_doubles):
-            self.intermediate_dict[i] = self.vacancy_no_doubles.get(key)
-        self.vacancy_no_doubles = {}
-        self.vacancy_no_doubles = self.intermediate_dict
+        for i, key in enumerate(dictionary):
+            self.intermediate_dict[i] = dictionary.get(key)
+        if dict_name == "vacancy_no_doubles":
+            self.vacancy_no_doubles = self.intermediate_dict
+            print("vacancy_no_doubles after", self.vacancy_no_doubles)
+        elif dict_name == "vacancy_sort_title_plus":
+            self.vacancy_sort_title_plus = self.intermediate_dict
+            print("vacancy_sort_title_plus after", self.vacancy_sort_title_plus)
+        dictionary = self.intermediate_dict
+        print("dictionary", dictionary)
         print("intermediate_sorting done")
 
     def for_plus_list_remove_vacancy(self, dict_name):
-        dd = {
-            "vacancy_no_doubles": self.vacancy_no_doubles,
-            "vacancy_sort_title_plus": self.vacancy_sort_title_plus,
-        }
-        for i, key in enumerate(dd.get(dict_name)):
-            vacancy_text = self.get_vac_content(self.page, i, 0, dd.get(dict_name).get(i)[2])
+        for i, key in enumerate(self.dd.get(dict_name)):
+            vacancy_text = self.get_vac_content(self.page, i, 0, self.dd.get(dict_name).get(i)[2])
             for plus_word in self.content_plus_list:
                 if plus_word in vacancy_text in vacancy_text:
                     pass
