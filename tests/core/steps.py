@@ -59,13 +59,6 @@ def sort_for_plus_words_title(base_page, file_name):
     store["cou"] = cou
 
 
-
-
-@when(parsers.parse("save results {dict_name} in {file_save_name}"))
-def save_results(base_page, dict_name, file_save_name):
-    base_page.save_results(dict_name, file_save_name)
-
-
 @when(parsers.parse("for plus_list {dict_name}"))
 def for_plus_list_remove_vacancy(base_page, dict_name):
     base_page.for_plus_list_remove_vacancy(dict_name)

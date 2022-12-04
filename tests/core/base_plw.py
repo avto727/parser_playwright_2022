@@ -10,22 +10,22 @@ from files.plus_lists import PlusLists
 from utils.elements import *
 
 
-from dict_vacancy import vacancy as vac # Remove
-from dict_sort_plus import sort as sort # Remove
+# from dict_vacancy import vacancy as vac # Remove
+# from dict_sort_plus import sort as sort # Remove
 
 
 class BasePage:
     path_project = "./"
 
-    vacancy_no_doubles = vac  # Remove
-    vacancy_sort_title_plus = sort  # Remove
+    # vacancy_no_doubles = vac  # Remove
+    # vacancy_sort_title_plus = sort  # Remove
 
     def __init__(self, config, setup_browser):
-        # self.vacancy_sort_title_plus = {}  # Uncomment ! don't remove
+        self.vacancy_sort_title_plus = {}  # Uncomment ! don't remove
         self.intermediate_dict = {}
         self.vacancy = {}
         self.sorted_vacancy = {}
-        # self.vacancy_no_doubles = {}  # Uncomment ! don't remove
+        self.vacancy_no_doubles = {}  # Uncomment ! don't remove
         self.page = setup_browser.page
         self.browser = setup_browser.browser
         self.elem = Elem()
@@ -197,6 +197,7 @@ class BasePage:
         for i, key in enumerate(self.vacancy):
             self.vacancy_no_doubles[i] = self.vacancy.get(key)
         print(self.vacancy_no_doubles)
+        self.save_results(self.vacancy_no_doubles, "hh_2022_salary")
 
     def sorted_for_salary(self):
         # сортировка по ЗП
@@ -222,17 +223,15 @@ class BasePage:
         context2.close()
         return count_deleted
 
-    def save_results(self, dict_name, file_save_name):
-        for i in range(len(self.dd.get(dict_name))):
+    def save_results(self, dict_file, file_save_name):
+        for i in range(len(dict_file)):
             print(i)
-            if i == 123:
-                pass
             self.data_to_file(
                 file_save_name,
-                self.dd.get(dict_name).get(i)[1],
-                self.dd.get(dict_name).get(i)[0],
-                self.dd.get(dict_name).get(i)[2],
-                self.dd.get(dict_name).get(i)[3]
+                dict_file.get(i)[1],
+                dict_file.get(i)[0],
+                dict_file.get(i)[2],
+                dict_file.get(i)[3]
             )
 
     def sort_for_plus_words_title(self, file_name):
@@ -259,7 +258,7 @@ class BasePage:
         self.intermediate_sorting("vacancy_no_doubles")
         print(cou, self.vacancy_sort_title_plus)
         print(self.vacancy_no_doubles)
-        self.save_results("vacancy_sort_title_plus", file_name)
+        self.save_results(self.vacancy_sort_title_plus, file_name)
         print("PASS STEP 'When sort for plus words title save to sort_plus_title_hh_2022'")
         return cou
         #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
@@ -280,6 +279,8 @@ class BasePage:
         print("1 transiton on content end")
         print(self.vacancy_no_doubles)
         print(cou, self.vacancy_sort_title_plus)
+        self.intermediate_sorting("vacancy_sort_title_plus")
+        self.save_results(self.vacancy_sort_title_plus, "short_list_34")
         #   3.Найти хоть одно плюс слово в вакансии
         xpath_c = "//div[contains(@class,'g-user-content')]"
         for i in range(len(self.vacancy_no_doubles)):
@@ -305,6 +306,7 @@ class BasePage:
         print(self.vacancy_no_doubles)
         print(self.vacancy_sort_title_plus)
         self.intermediate_sorting("vacancy_sort_title_plus")
+        self.save_results(self.vacancy_sort_title_plus, "long_list_all")
 
         pass
 
