@@ -3,6 +3,7 @@ class PlusLists:
         "python",
         "auto",
         "авто",
+        "тестировщик",
 
     ]
     content_tester_python_web_plus_list = [

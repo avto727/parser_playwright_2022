@@ -70,8 +70,8 @@ class BasePage:
         else:
             print("Undefined selector")
 
-    def get_page_data(self, config, html, index):
-        # выборка нужных данных
+    def get_page_data(self, html, index, step):
+        # выборка списка вакансий со страницы и запись в словарь self.vacancy_dict
         employer_red = ''
         soup = bs(html, 'html.parser')
         table = soup.find('div', id='a11y-main-content')
@@ -103,10 +103,9 @@ class BasePage:
                 employer = ad.find('a', class_='bloko-link bloko-link_kind-tertiary').text
             except:
                 employer = ''
-            # Filters
-            if self.title_filter(config, title):
+            # Фильтр вакансии по заголовку
+            if self.title_filter(title, step):
                 key = f"{str(index)}{str(k)}"
-                # print(i, title, schedule, compensation, href)
                 print(key, title, compensation)
                 if compensation != "":
                     # print(self.processing_compensation(compensation))
@@ -118,14 +117,9 @@ class BasePage:
                 flag = 0
                 self.vacancy_dict[key] = [int(compensation), title, href, employer_red, flag]
                 k += 1
-
+            else:
+                print(f"По заголовку {title} вакансия не включена в словарь Step {step}_3_{index}")
         print(self.vacancy_dict)
-        pass
-
-    #         Sort
-
-    # Save to file
-    #   self.data_to_file(i, title, compensation, href)
 
     @staticmethod
     def processing_compensation(compensation):
@@ -156,7 +150,7 @@ class BasePage:
             writer = csv.writer(f, delimiter=';', lineterminator='\n')
             writer.writerow((data['title'], data['schedule'], data['compensation'], data['href']))
 
-    def title_filter(self, config, title) -> bool:
+    def title_filter(self, title, step) -> bool:
         pass
         title_auto_tester_python_minus_list = self.minus_list_dict.get(self.name_suit)
         flag = True
@@ -169,8 +163,8 @@ class BasePage:
         else:
             return False
 
-    def sort_salary_and_delete_doubles(self):
-        count_sorted_dict = self.sorted_for_salary()
+    def sort_salary_and_delete_doubles(self, step):
+        count_sorted_dict = self.sorted_for_salary(step)
         # Фильтр по одинаковому заголовку. Проверка текста вакансии.
         count_deleted = 0
         for i in range(count_sorted_dict):
@@ -199,24 +193,24 @@ class BasePage:
         print(self.vacancy_no_doubles)
         self.save_results(self.vacancy_no_doubles, "hh_2022_salary")
 
-    def sorted_for_salary(self):
+    def sorted_for_salary(self, step):
         # сортировка по ЗП
-        print(f"Всего вакансий {len(self.vacancy_dict)}")
+        print(f"Всего вакансий {len(self.vacancy_dict)} step {step}_salary_sort_1")
         print(self.vacancy_dict)
         self.sorted_vacancy = dict(sorted(self.vacancy_dict.items(), key=lambda item: item[1]))
-        assert len(self.vacancy_dict) == len(self.sorted_vacancy), "Сортировка произведена с ошибкой"
-        print(len(self.sorted_vacancy))
-        print(self.sorted_vacancy)
+        assert len(self.vacancy_dict) == len(self.sorted_vacancy), "Сортировка произведена с ошибкой step {step}_salary_error_1"
+        print(len(self.sorted_vacancy), f"step {step}_salary_sort_2")
+        print(f"step {step}_salary_sort_3", self.sorted_vacancy)
         a = list(self.sorted_vacancy.keys())
         b = a[::-1]
         for i in range(len(a)):
             self.vacancy.update({i: self.sorted_vacancy.get(b[i])})
-        print(self.vacancy)
-        assert len(self.vacancy) == len(self.sorted_vacancy), "Реверс произведен с ошибкой"
+        print(f"step {step}_salary_sort_3", self.vacancy)
+        assert len(self.vacancy) == len(self.sorted_vacancy), "Реверс произведен с ошибкой step {step}_salary_error_2"
         return len(a)
 
     def delete_double_vacancy(self, context2, count_deleted, i):
-        print(f"Delete vacancy key {i} url {self.vacancy.get(i)} ")
+        print(f"Delete double key {i} url {self.vacancy.get(i)} ")
         self.vacancy.pop(i)
         print(len(self.vacancy))
         count_deleted += 1
@@ -225,7 +219,6 @@ class BasePage:
 
     def save_results(self, dict_file, file_save_name):
         for i in range(len(dict_file)):
-            print(i)
             self.data_to_file(
                 file_save_name,
                 dict_file.get(i)[1],
@@ -236,18 +229,18 @@ class BasePage:
 
     def sort_for_plus_words_title(self, file_name):
         cou = 0
-        for plus_word in self.content_plus_list:
+        for plus_word in self.content_plus_list: # Перебираем плюс слова
             for i in range(len(self.vacancy_no_doubles)):
-                if self.vacancy_no_doubles.get(i) == None:
+                if self.vacancy_no_doubles.get(i) is None:
                     continue
                 if self.vacancy_no_doubles.get(i)[4] == 1:
                     continue
                 title = self.vacancy_no_doubles.get(i)[1].lower()
-                if plus_word.lower() in title:
+                if plus_word.lower() in title: # Если хоть одно плюс слово есть в заголовке
                     vacancy_text = self.get_vac_content(self.page, i, cou, self.vacancy_no_doubles.get(i)[2])
                     """ ???? А может добавлять текст описания вакансии в выходной файл?
                              Тогда можно просматривать вакансии без перехода по ссылке?"""
-                    if self.content_plus_list[0] in vacancy_text:
+                    if self.content_plus_list[0] in vacancy_text: # Если первое слово есть в заголовке, то берем
                         print(i, title, "Vacancy add to sort_title")
                         self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                         self.vacancy_no_doubles.get(i)[4] = 1
