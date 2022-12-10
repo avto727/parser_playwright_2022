@@ -275,31 +275,31 @@ class BasePage:
         self.intermediate_sorting("vacancy_sort_title_plus")
         self.save_results(self.vacancy_sort_title_plus, "short_list_34")
         #   3.Найти хоть одно плюс слово в вакансии
-        xpath_c = "//div[contains(@class,'g-user-content')]"
-        for i in range(len(self.vacancy_no_doubles)):
-            if self.vacancy_no_doubles.get(i)[4] == 0:
-                vacancy_text = self.get_vac_content(self.page, i, cou, self.vacancy_no_doubles.get(i)[2])
-                for plus_word in self.content_plus_list:
-                    if plus_word in vacancy_text in vacancy_text:
-                        self.get_employer(cou, i)
-                        self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
-                        cou += 1
-                        print(i, cou, self.vacancy_no_doubles.get(i), "2 sort content Plus word")
-                        break
-                if self.vacancy_no_doubles.get(i)[4] == 0:
-                    self.check_content_for_minus_word(i, vacancy_text)
-        self.intermediate_sorting("vacancy_no_doubles")
-        self.intermediate_sorting("vacancy_sort_title_plus")
-        print("2 transition on content end")
-        print(self.vacancy_no_doubles)
-        print(cou, self.vacancy_sort_title_plus)
-        #   4.Найти минус слова. Если есть - удалить вакансию
-        #   5.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
-        print("Final sort")
-        print(self.vacancy_no_doubles)
-        print(self.vacancy_sort_title_plus)
-        self.intermediate_sorting("vacancy_sort_title_plus")
-        self.save_results(self.vacancy_sort_title_plus, "long_list_all")
+        # xpath_c = "//div[contains(@class,'g-user-content')]"
+        # for i in range(len(self.vacancy_no_doubles)):
+        #     if self.vacancy_no_doubles.get(i)[4] == 0:
+        #         vacancy_text = self.get_vac_content(self.page, i, cou, self.vacancy_no_doubles.get(i)[2])
+        #         for plus_word in self.content_plus_list:
+        #             if plus_word in vacancy_text in vacancy_text:
+        #                 self.get_employer(cou, i)
+        #                 self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
+        #                 cou += 1
+        #                 print(i, cou, self.vacancy_no_doubles.get(i), "2 sort content Plus word")
+        #                 break
+        #         if self.vacancy_no_doubles.get(i)[4] == 0:
+        #             self.check_content_for_minus_word(i, vacancy_text)
+        # self.intermediate_sorting("vacancy_no_doubles")
+        # self.intermediate_sorting("vacancy_sort_title_plus")
+        # print("2 transition on content end")
+        # print(self.vacancy_no_doubles)
+        # print(cou, self.vacancy_sort_title_plus)
+        # #   4.Найти минус слова. Если есть - удалить вакансию
+        # #   5.Если нет плюс и минус слов, то наверно вакансия не соответствует поиску и ее тоже надо удалить.
+        # print("Final sort")
+        # print(self.vacancy_no_doubles)
+        # print(self.vacancy_sort_title_plus)
+        # self.intermediate_sorting("vacancy_sort_title_plus")
+        # self.save_results(self.vacancy_sort_title_plus, "long_list_all")
 
         pass
 
