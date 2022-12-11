@@ -70,6 +70,15 @@ class BasePage:
         else:
             print("Undefined selector")
 
+    def get_content_vacancies_list_page(self, config, index, keyword, step):
+        s_url = config["MAIN"]["search_url"]
+        search_url = s_url.replace("text=1", f"text={keyword}").replace("page=1", f"page={index}")
+        print(f"\nПроход по стр {index} step {step}_1_{index}")
+        self.open(search_url)
+        html = self.page.content()
+        print(f"\nОтправка контента страницы {index} на обработку step {step}_2_{index}")
+        return html
+
     def get_page_data(self, html, index, step):
         # выборка списка вакансий со страницы и запись в словарь self.vacancy_dict
         employer_red = ''
@@ -104,7 +113,7 @@ class BasePage:
             except:
                 employer = ''
             # Фильтр вакансии по заголовку
-            if self.title_filter(title, step):
+            if self.title_filter(title):
                 key = f"{str(index)}{str(k)}"
                 print(key, title, compensation)
                 if compensation != "":
@@ -118,8 +127,10 @@ class BasePage:
                 self.vacancy_dict[key] = [int(compensation), title, href, employer_red, flag]
                 k += 1
             else:
-                print(f"По заголовку {title} вакансия не включена в словарь Step {step}_3_{index}")
+                if title != "":
+                    print(f" Не включена в словарь {title} Step {step}_3_{index}")
         print(self.vacancy_dict)
+
 
     @staticmethod
     def processing_compensation(compensation):
@@ -150,8 +161,7 @@ class BasePage:
             writer = csv.writer(f, delimiter=';', lineterminator='\n')
             writer.writerow((data['title'], data['schedule'], data['compensation'], data['href']))
 
-    def title_filter(self, title, step) -> bool:
-        pass
+    def title_filter(self, title) -> bool:
         title_auto_tester_python_minus_list = self.minus_list_dict.get(self.name_suit)
         flag = True
         for minus_word in title_auto_tester_python_minus_list:
@@ -163,8 +173,7 @@ class BasePage:
         else:
             return False
 
-    def sort_salary_and_delete_doubles(self, step):
-        count_sorted_dict = self.sorted_for_salary(step)
+    def delete_doubles(self, count_sorted_dict, step):
         # Фильтр по одинаковому заголовку. Проверка текста вакансии.
         count_deleted = 0
         for i in range(count_sorted_dict):

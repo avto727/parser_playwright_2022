@@ -23,6 +23,29 @@ def check_def_choose_selector(base_page, step):
         assert xps.get(text_key) is None, f"key {text_key} have not to in xp"
     print(f"Step {step} PASS")
 
-@when(parsers.parse("check def get_page_data step {step}"))
-def check_def_get_page_data(base_page, step):
-    pass
+
+@when(parsers.parse("check def pass_for_one_list_vacancies_page {index}, {keyword}, step {step}"))
+def check_def_pass_for_one_list_vacancies_page(base_page, config, index, keyword, step):
+    # получение вакансий с 2-х страниц, запись в словарь self.vacancy_dict
+    index = 0
+    while index < 2:
+        html = base_page.get_content_vacancies_list_page(config, index, keyword, step)
+        base_page.get_page_data(html, index, step)
+        index = index + 1
+        sleep(1.5)
+    print(f"Step {step} from unit_steps.py PASS")
+
+
+@when(parsers.parse("check def title_filter step {step}"))
+def check_def_title_filter(base_page, config, step):
+    vac_dict = base_page.vacancy_dict
+    title_auto_tester_python_minus_list = base_page.minus_list_dict.get(base_page.name_suit)
+    for key in vac_dict.keys():
+        title = vac_dict.get(key)[1]
+        flag = base_page.title_filter(title)
+        assert flag, f"Find minus word in title {title}, key {key}"
+        # another way check titles
+        for minus_word in title_auto_tester_python_minus_list:
+            assert minus_word.lower() not in title.lower(), f"minus_word {minus_word.lower()} is in title {title.lower()}"
+    print(f"Step {step}_1 from unit_steps.py PASS")
+

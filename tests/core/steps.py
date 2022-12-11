@@ -36,23 +36,22 @@ def determ_total_pages(base_page, step):
 def pages_processing(base_page, config, step):
     total_pages = int(store["total_pages"])
     keyword = store["keyword"]
-    s_url = config["MAIN"]["search_url"]
     index = 0
     while index < total_pages:
-        search_url = s_url.replace("text=1", f"text={keyword}").replace("page=1", f"page={index}")
-        print(f"\nПроход по стр {index} step {step}_1_{index}")
-        base_page.open(search_url)
-        html = base_page.page.content()
-        print(f"\nОтправка контента страницы {index} на обработку step {step}_2_{index}")
+        html = base_page.get_content_vacancies_list_page(config, index, keyword, step)
         base_page.get_page_data(html, index, step)
         index = index + 1
         sleep(1.5)
     print(f"Step {step} from steps.py done")
 
 
+
+
+
 @when(parsers.parse("sort salary and delete doubles step {step}"))
 def sort_salary_and_delete_doubles(base_page, step):
-    base_page.sort_salary_and_delete_doubles(step)
+    count_sorted_dict = base_page.sorted_for_salary(step)
+    base_page.delete_doubles(count_sorted_dict, step)
     print(f"Step {step} from steps.py done")
 
 
