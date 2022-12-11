@@ -10,10 +10,16 @@ store = Store()
 @when(parsers.parse("check def choose_selector step {step}"))
 def check_def_choose_selector(base_page, step):
     xps = base_page.xp
-    for xp in xps.keys():
-        locator = base_page.choose_selector(xp)
-        print(xp, locator)
     texts = base_page.text
-    for text in texts.keys():
-        locator = base_page.choose_selector(text)
-        print(text, locator)
+    for xp_key in xps.keys():
+        locator = base_page.choose_selector(xp_key)
+        # print(xp_key, locator)
+        assert xps.get(xp_key) in str(locator), f"def_choose_selector wrong in xp"
+        assert texts.get(xp_key) is None, f"key {xp_key} have not to in text"
+    for text_key in texts.keys():
+        locator = base_page.choose_selector(text_key)
+        # print(text_key, locator)
+        assert texts.get(text_key)[0] in str(locator), f"def_choose_selector wrong in text"
+        assert xps.get(text_key) is None, f"key {text_key} have not to in xp"
+
+
