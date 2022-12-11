@@ -7,9 +7,13 @@ from tests.core.store import Store
 store = Store()
 
 
-@when(parsers.parse("determinate total_pages to store step {step}"))
-def determ_total_pages(base_page, step):
-    total_pages = int(base_page.determ_last_element("paginator"))  # Сколько всего страниц
-    print(f"всего страниц total_pages = {total_pages}")
-    store["total_pages"] = total_pages
-    print(f"Step {step} from steps.py done")
+@when(parsers.parse("check def choose_selector step {step}"))
+def check_def_choose_selector(base_page, step):
+    xps = base_page.xp
+    for xp in xps.keys():
+        locator = base_page.choose_selector(xp)
+        print(xp, locator)
+    texts = base_page.text
+    for text in texts.keys():
+        locator = base_page.choose_selector(text)
+        print(text, locator)
