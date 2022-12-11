@@ -173,34 +173,34 @@ class BasePage:
         else:
             return False
 
-    def delete_doubles(self, count_sorted_dict, step):
+    def delete_doubles(self, vac_sorted_dict, count_sorted_dict, step):
         # Фильтр по одинаковому заголовку. Проверка текста вакансии.
         count_deleted = 0
         for i in range(count_sorted_dict):
             j = i + 1
             for j in range(j, count_sorted_dict):
-                s_i = self.vacancy.get(i)[1] + self.vacancy.get(i)[3]
-                s_j = self.vacancy.get(j)[1] + self.vacancy.get(j)[3]
+                s_i = vac_sorted_dict.get(i)[1] + vac_sorted_dict.get(i)[3]
+                s_j = vac_sorted_dict.get(j)[1] + vac_sorted_dict.get(j)[3]
                 if s_i == s_j:
-                    print(i, j, self.vacancy.get(i)[1])
+                    print(i, j, vac_sorted_dict.get(i)[1])
                     sleep(2)
-                    self.page.goto(self.vacancy.get(i)[2], timeout=120000)
-                    text_summ1 = self.get_vac_content(self.page, i, j, self.vacancy.get(i)[2])[:500]
+                    self.page.goto(vac_sorted_dict.get(i)[2], timeout=120000)
+                    text_summ1 = self.get_vac_content(self.page, i, j, vac_sorted_dict.get(i)[2])[:500]
 
                     context2 = self.browser.new_context()
                     page2 = context2.new_page()
-                    text_summ2 = self.get_vac_content(page2, i, j, self.vacancy.get(i)[2])[:500]
+                    text_summ2 = self.get_vac_content(page2, i, j, vac_sorted_dict.get(i)[2])[:500]
 
                     if text_summ1 == text_summ2:
                         count_deleted = self.delete_double_vacancy(context2, count_deleted, i)
                         break
                     context2.close()
         print(f"Удалено по одинаковому содержанию {count_deleted} вакансий.")
-        print(self.vacancy)
-        for i, key in enumerate(self.vacancy):
-            self.vacancy_no_doubles[i] = self.vacancy.get(key)
+        print(f"vac_sorted_dict {vac_sorted_dict}")
+        for i, key in enumerate(vac_sorted_dict):
+            self.vacancy_no_doubles[i] = vac_sorted_dict.get(key)
         print(self.vacancy_no_doubles)
-        self.save_results(self.vacancy_no_doubles, "hh_2022_salary")
+        self.save_results(self.vacancy_no_doubles, "hh_2022_no_doubles")
 
     def sorted_for_salary(self, step):
         # сортировка по ЗП
@@ -216,7 +216,7 @@ class BasePage:
             self.vacancy.update({i: self.sorted_vacancy.get(b[i])})
         print(f"step {step}_salary_sort_3", self.vacancy)
         assert len(self.vacancy) == len(self.sorted_vacancy), "Реверс произведен с ошибкой step {step}_salary_error_2"
-        return len(a)
+        return self.vacancy
 
     def delete_double_vacancy(self, context2, count_deleted, i):
         print(f"Delete double key {i} url {self.vacancy.get(i)} ")
