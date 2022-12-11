@@ -21,5 +21,8 @@ def check_def_choose_selector(base_page, step):
         # print(text_key, locator)
         assert texts.get(text_key)[0] in str(locator), f"def_choose_selector wrong in text"
         assert xps.get(text_key) is None, f"key {text_key} have not to in xp"
+    print(f"Step {step} PASS")
 
-
+@when(parsers.parse("check def get_page_data step {step}"))
+def check_def_get_page_data(base_page, step):
+    pass
