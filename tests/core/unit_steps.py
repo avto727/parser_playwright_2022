@@ -1,7 +1,7 @@
 from time import sleep
 
 from pytest_bdd import given, parsers, when
-
+from dict_vacancy import vacancy
 from tests.core.store import Store
 
 store = Store()
@@ -48,4 +48,10 @@ def check_def_title_filter(base_page, config, step):
         for minus_word in title_auto_tester_python_minus_list:
             assert minus_word.lower() not in title.lower(), f"minus_word {minus_word.lower()} is in title {title.lower()}"
     print(f"Step {step}_1 from unit_steps.py PASS")
+
+
+@when(parsers.parse("check def delete_doubles {step}"))
+def check_def_delete_doubles(base_page, config, step):
+    vac_sorted_dict = vacancy
+    base_page.delete_doubles(vac_sorted_dict, len(vac_sorted_dict), step)
 
