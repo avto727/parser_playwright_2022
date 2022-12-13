@@ -8,4 +8,9 @@ def test_unit_1() -> None:
     pass
 
 
+@scenario("unit_test.feature", "unit_test_delete_doubles")
+def test_unit_1() -> None:
+    pass
+
+
 

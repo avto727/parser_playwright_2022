@@ -50,8 +50,12 @@ def check_def_title_filter(base_page, config, step):
     print(f"Step {step}_1 from unit_steps.py PASS")
 
 
-@when(parsers.parse("check def delete_doubles {step}"))
+@when(parsers.parse("check def dict_sorting step {step}"))
+def check_def_dict_sorting(base_page, config, step):
+    base_page.dict_sorting(vacancy)
+
+@when(parsers.parse("check def delete_doubles step {step}"))
 def check_def_delete_doubles(base_page, config, step):
     vac_sorted_dict = vacancy
-    base_page.delete_doubles(vac_sorted_dict, len(vac_sorted_dict), step)
-
+    same_dict = base_page.create_same_dict(vac_sorted_dict, len(vac_sorted_dict), step)
+    base_page.delete_doubles(vac_sorted_dict, same_dict, step)

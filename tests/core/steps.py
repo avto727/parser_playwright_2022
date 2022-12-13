@@ -45,13 +45,11 @@ def pages_processing(base_page, config, step):
     print(f"Step {step} from steps.py done")
 
 
-
-
-
 @when(parsers.parse("sort salary and delete doubles step {step}"))
 def sort_salary_and_delete_doubles(base_page, step):
     vac_sorted_dict = base_page.sorted_for_salary(step)
-    base_page.delete_doubles(vac_sorted_dict, len(vac_sorted_dict), step)
+    same_dict = base_page.create_same_dict(vac_sorted_dict, len(vac_sorted_dict), step)
+    base_page.delete_doubles(vac_sorted_dict, same_dict, step)
     print(f"Step {step} from steps.py done")
 
 
