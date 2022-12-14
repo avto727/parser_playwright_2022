@@ -278,7 +278,7 @@ class BasePage:
                     continue
                 title = self.vacancy_no_doubles.get(i)[1].lower()
                 if plus_word.lower() in title: # Если хоть одно плюс слово есть в заголовке
-                    vacancy_text = self.get_vac_content(self.page, i, cou, self.vacancy_no_doubles.get(i)[2])
+                    vacancy_text = self.get_vac_content(self.page, i, self.vacancy_no_doubles.get(i)[2])
                     """ ???? А может добавлять текст описания вакансии в выходной файл?
                              Тогда можно просматривать вакансии без перехода по ссылке?"""
                     if self.content_plus_list[0] in vacancy_text: # Если первое слово есть в заголовке, то берем
@@ -302,7 +302,7 @@ class BasePage:
         for i in range(len(self.vacancy_no_doubles)):
             if self.vacancy_no_doubles.get(i)[4] == 0:
                 #   1.Получить текст описания вакансии с vac.get(i)[4] = 0
-                vacancy_text = self.get_vac_content(self.page, i, cou, self.vacancy_no_doubles.get(i)[2])
+                vacancy_text = self.get_vac_content(self.page, i, self.vacancy_no_doubles.get(i)[2])
                 #   2.Найти 2 плюс слова. Если есть - запись и  vac.get(i)[4] = 1
                 if self.content_plus_list[0] in vacancy_text and self.content_plus_list[1] in vacancy_text:
                     self.get_employer(cou, i)
@@ -320,7 +320,7 @@ class BasePage:
         # xpath_c = "//div[contains(@class,'g-user-content')]"
         # for i in range(len(self.vacancy_no_doubles)):
         #     if self.vacancy_no_doubles.get(i)[4] == 0:
-        #         vacancy_text = self.get_vac_content(self.page, i, cou, self.vacancy_no_doubles.get(i)[2])
+        #         vacancy_text = self.get_vac_content(self.page, i, self.vacancy_no_doubles.get(i)[2])
         #         for plus_word in self.content_plus_list:
         #             if plus_word in vacancy_text in vacancy_text:
         #                 self.get_employer(cou, i)
@@ -384,7 +384,7 @@ class BasePage:
 
     def for_plus_list_remove_vacancy(self, dict_name):
         for i, key in enumerate(self.dd.get(dict_name)):
-            vacancy_text = self.get_vac_content(self.page, i, 0, self.dd.get(dict_name).get(i)[2])
+            vacancy_text = self.get_vac_content(self.page, i, self.dd.get(dict_name).get(i)[2])
             for plus_word in self.content_plus_list:
                 if plus_word in vacancy_text in vacancy_text:
                     pass
