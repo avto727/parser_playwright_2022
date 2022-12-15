@@ -89,7 +89,8 @@ class BasePage:
         for i, ad in enumerate(table):
             try:
                 title = ad.find('a', class_='serp-item__title').text
-            except:
+            except Exception as e:
+                print("Exception", e)
                 title = ''
             try:
                 schedule = ad.find(
@@ -98,19 +99,23 @@ class BasePage:
                     'div', class_='search-result-label search-result-label_work-schedule'
                 ).find(
                     'div', class_='bloko-text').text
-            except:
+            except Exception as e:
+                print("Exception", e)
                 schedule = ''
             try:
                 compensation = ad.find('span', class_='bloko-header-section-3').text
-            except:
+            except Exception as e:
+                print("Exception", e)
                 compensation = ''
             try:
                 href = ad.find('a', class_='serp-item__title').get('href').split("?")[0]
-            except:
+            except Exception as e:
+                print("Exception", e)
                 href = ''
             try:
                 employer = ad.find('a', class_='bloko-link bloko-link_kind-tertiary').text
-            except:
+            except Exception as e:
+                print("Exception", e)
                 employer = ''
             # Фильтр вакансии по заголовку
             if self.title_filter(title):
@@ -358,8 +363,8 @@ class BasePage:
             xpath_e = "//span[contains(@class,'bloko-header-section-2 bloko-header-section-2_lite')]"
             try:
                 self.vacancy_no_doubles.get(i)[3] = self.page.locator(xpath_e).all_inner_texts()[2].lower()
-            except:
-                print(i, cou, self.vacancy_no_doubles.get(i), "Не получен работодатель")
+            except Exception as e:
+                print(i, cou, self.vacancy_no_doubles.get(i), "Не получен работодатель", e)
 
     def get_vac_content(self, page, i: int, url: str) -> str:
         page.goto(url, timeout=240000)
@@ -367,8 +372,8 @@ class BasePage:
         if not tmpl:
             try:
                 vacancy_text = self.page.locator("//div[contains(@class,'g-user-content')]").all_inner_texts()[0].lower()
-            except:
-                print(i, self.vacancy_no_doubles.get(i)[2])
+            except Exception as e:
+                print(i, self.vacancy_no_doubles.get(i)[2], e)
                 vacancy_text = ""
         else:
             vacancy_text = tmpl[0].lower()
