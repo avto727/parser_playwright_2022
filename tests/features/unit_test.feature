@@ -10,9 +10,14 @@ Feature: unit_test_1
     When check def delete_doubles step 4
 
 
-  @unit
+#  @unit
   Scenario: unit_test_delete_doubles
 #  Сортировка словаря из файла dict_vacancy.py
 #    When check def dict_sorting step 5
 #  Проверка функции delete_doubles. Берется словарь из файла dict_vacancy.py
     When check def delete_doubles step 6
+
+
+  @unit
+  Scenario: unit_test_sort_plus_word_in_title
+    When check def_sort_for_plus_words_title file_name step 1

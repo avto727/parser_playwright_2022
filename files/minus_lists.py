@@ -31,6 +31,7 @@ class MinusLists:
         "мануал",
         "manual",
         "Performance",
+        "penetration",
         "игр",
         "Маркетолог",
         "голосовых роботов",

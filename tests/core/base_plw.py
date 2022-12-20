@@ -181,7 +181,7 @@ class BasePage:
 
     def create_same_dict(self, vac_sorted_dict, count_sorted_dict, step):
         # Фильтр по одинаковому заголовку. Проверка текста вакансии.
-        # Получить словарь вакансий с одинаковыми заголовками key - номер первой вакансии.
+        # Получить словарь вакансий с одинаковыми заголовками, key - номер первой вакансии.
         same_dict = {}
         for i in range(count_sorted_dict):
             same_list = []
@@ -283,10 +283,11 @@ class BasePage:
                     continue
                 title = self.vacancy_no_doubles.get(i)[1].lower()
                 if plus_word.lower() in title: # Если хоть одно плюс слово есть в заголовке
+                    # получаем описание вакансии
                     vacancy_text = self.get_vac_content(self.page, i, self.vacancy_no_doubles.get(i)[2])
                     """ ???? А может добавлять текст описания вакансии в выходной файл?
                              Тогда можно просматривать вакансии без перехода по ссылке?"""
-                    if self.content_plus_list[0] in vacancy_text: # Если первое слово есть в заголовке, то берем
+                    if self.content_plus_list[0] in vacancy_text: # Если первое слово есть в описании, то берем
                         print(i, title, "Vacancy add to sort_title")
                         self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                         self.vacancy_no_doubles.get(i)[4] = 1
@@ -301,6 +302,7 @@ class BasePage:
         print("PASS STEP 'When sort for plus words title save to sort_plus_title_hh_2022'")
         return cou
         #   Отсортированы по заголовку cou = 35 позиций, дальше по содержанию
+        # По этим позициям можно смело откликаться.
 
     def sort_for_plus_words_in_content(self, cou):
         cou = int(cou)

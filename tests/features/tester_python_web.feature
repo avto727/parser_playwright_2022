@@ -11,4 +11,5 @@ Feature: tester_python_web
     When pages with list vacancy processing step 4
     When sort salary and delete doubles step 5
     When sort for plus words title save to sort_plus_title_hh_2022 step 6
+
     When sort for plus words description vacancy step 7

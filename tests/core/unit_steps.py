@@ -1,6 +1,8 @@
 from time import sleep
 
 from pytest_bdd import given, parsers, when
+
+from no_doubles import n_doubles as no_doubles
 from dict_vacancy import vacancy
 from tests.core.store import Store
 
@@ -54,8 +56,17 @@ def check_def_title_filter(base_page, config, step):
 def check_def_dict_sorting(base_page, config, step):
     base_page.dict_sorting(vacancy)
 
+
 @when(parsers.parse("check def delete_doubles step {step}"))
 def check_def_delete_doubles(base_page, config, step):
     vac_sorted_dict = vacancy
     same_dict = base_page.create_same_dict(vac_sorted_dict, len(vac_sorted_dict), step)
     base_page.delete_doubles(vac_sorted_dict, same_dict, step)
+
+
+@when(parsers.parse("check def_sort_for_plus_words_title {file_name} step {step}"))
+def check_def_sort_for_plus_words_title(base_page, config, file_name, step):
+    base_page.vacancy_no_doubles = no_doubles
+    cou = base_page.sort_for_plus_words_title(file_name)
+    print(cou)
+    print(base_page.vacancy_sort_title_plus)
