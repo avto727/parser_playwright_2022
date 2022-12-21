@@ -35,7 +35,7 @@ class MinusLists:
         "игр",
         "Маркетолог",
         "голосовых роботов",
-        "Mobile Tech Lead",
+        "Mobile",
         "Ведущий пентестер",
         "Ruby",
         "Vue.js",

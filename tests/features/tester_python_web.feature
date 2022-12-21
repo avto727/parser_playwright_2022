@@ -5,7 +5,7 @@ Feature: tester_python_web
 
   @tester_python_web
   Scenario: tester_python_web
-    Given Open browser base_url keyword=тестировщик schedule=удаленка step 1
+    Given Open browser base_url keyword=python schedule=удаленка step 1
     When click Button_Всё_верно step 2
     When determinate total_pages to store step 3
     When pages with list vacancy processing step 4

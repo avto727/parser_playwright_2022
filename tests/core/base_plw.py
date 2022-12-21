@@ -1,6 +1,5 @@
 """В файле base_plw.py находятся функции, которые работают с html страницей"""
 import csv
-import json
 from time import sleep
 
 from bs4 import BeautifulSoup as bs
@@ -90,7 +89,7 @@ class BasePage:
             try:
                 title = ad.find('a', class_='serp-item__title').text
             except Exception as e:
-                print("Exception", e)
+                print("Exception title", e)
                 title = ''
             try:
                 schedule = ad.find(
@@ -100,22 +99,22 @@ class BasePage:
                 ).find(
                     'div', class_='bloko-text').text
             except Exception as e:
-                print("Exception", e)
+                print("Exception schedule", e)
                 schedule = ''
             try:
                 compensation = ad.find('span', class_='bloko-header-section-3').text
             except Exception as e:
-                print("Exception", e)
+                print("Exception compensation", e)
                 compensation = ''
             try:
                 href = ad.find('a', class_='serp-item__title').get('href').split("?")[0]
             except Exception as e:
-                print("Exception", e)
+                print("Exception href", e)
                 href = ''
             try:
                 employer = ad.find('a', class_='bloko-link bloko-link_kind-tertiary').text
             except Exception as e:
-                print("Exception", e)
+                print("Exception employer", e)
                 employer = ''
             # Фильтр вакансии по заголовку
             if self.title_filter(title):
@@ -312,7 +311,9 @@ class BasePage:
                 vacancy_text = self.get_vac_content(self.page, i, self.vacancy_no_doubles.get(i)[2])
                 #   2.Найти 2 плюс слова. Если есть - запись и  vac.get(i)[4] = 1
                 if self.content_plus_list[0] in vacancy_text and self.content_plus_list[1] in vacancy_text:
+                    # Уточняем работодателя
                     self.get_employer(cou, i)
+                    self.vacancy_no_doubles.get(i)[4] = 1
                     self.vacancy_sort_title_plus[cou] = self.vacancy_no_doubles.get(i)
                     cou += 1
                     print(i, cou, self.vacancy_no_doubles.get(i), "1 sort content Plus word")
