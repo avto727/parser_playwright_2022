@@ -8,4 +8,9 @@ def test_tester_python_web() -> None:
     pass
 
 
+@scenario("tester_ios.feature", "tester_ios")
+def test_tester_ios() -> None:
+    pass
+
+
 

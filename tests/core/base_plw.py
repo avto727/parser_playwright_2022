@@ -20,6 +20,7 @@ class BasePage:
     # vacancy_sort_title_plus = sort  # Remove
 
     def __init__(self, config, setup_browser):
+        self.name_suit = config["MAIN"]["name_suit"]
         self.vacancy_sort_title_plus = {}  # Uncomment ! don't remove
         self.intermediate_dict = {}
         self.vacancy = {}
@@ -33,15 +34,26 @@ class BasePage:
         self.vacancy_dict: dict = {}
         self.minus_list_dict = {
             "tester_python_web": MinusLists.title_tester_python_web_minus_list,
+            "tester_ios": MinusLists.title_tester_ios_minus_list,
             "dev_ios": MinusLists.title_dev_ios_minus_list,
         }
         self.dd = {
             "vacancy_no_doubles": self.vacancy_no_doubles,
             "vacancy_sort_title_plus": self.vacancy_sort_title_plus,
         }
-        self.content_plus_list = PlusLists().content_tester_python_web_plus_list
-        self.content_minus_list = MinusLists().content_tester_python_web_minus_list
-        self.name_suit = config["MAIN"]["name_suit"]
+        title_plus = {
+            "tester_python_web": PlusLists().content_tester_python_web_plus_list,
+            "tester_ios": PlusLists().title_tester_ios_plus_list,
+            "dev_ios": PlusLists().title_dev_ios_plus_list,
+        }
+        content_minus = {
+            "tester_python_web": MinusLists().content_tester_python_web_minus_list,
+            "tester_ios": MinusLists().content_tester_ios_web_minus_list,
+            "dev_ios": MinusLists().content_dev_ios_web_minus_list,
+        }
+
+        self.content_plus_list = title_plus.get(self.name_suit)
+        self.content_minus_list = content_minus.get(self.name_suit)
 
     def open(self, url):
         self.page.goto(url, timeout=90000)

@@ -10,8 +10,36 @@ class PlusLists:
         "python",
         "авто",
         "auto",
+        "гпх",
+        "самозан",
+    ]
+    title_tester_ios_plus_list = [
+        "ios",
+        "swift",
+        "mobile",
+        "auto",
+        "мобил",
 
     ]
-    title_dev_ios_minus_list = [
+    content_tester_ios_plus_list = [
+        "ios",
+        "swift",
+        "mobile",
+        "auto",
+        "гпх",
+        "самозан",
+        "мобил",
+
+    ]
+    title_dev_ios_plus_list = [
     "python",
+    ]
+    content_dev_ios_plus_list = [
+        "ios",
+        "swift",
+        "mobile",
+        "auto",
+        "гпх",
+        "самозан",
+
     ]
