@@ -18,4 +18,9 @@ def test_dev_android() -> None:
     pass
 
 
+@scenario("data_engineer.feature", "data_engineer")
+def test_data_engineer() -> None:
+    pass
+
+
 

@@ -37,6 +37,7 @@ class BasePage:
             "tester_ios": MinusLists.title_tester_ios_minus_list,
             "dev_ios": MinusLists.title_dev_ios_minus_list,
             "dev_android": MinusLists.title_dev_android_minus_list,
+            "data_engineer": MinusLists.title_data_engineer_minus_list,
         }
         self.dd = {
             "vacancy_no_doubles": self.vacancy_no_doubles,
@@ -47,12 +48,14 @@ class BasePage:
             "tester_ios": PlusLists().title_tester_ios_plus_list,
             "dev_ios": PlusLists().title_dev_ios_plus_list,
             "dev_android": PlusLists().title_dev_android_plus_list,
+            "data_engineer": PlusLists().title_data_engineer_plus_list,
         }
         content_minus = {
             "tester_python_web": MinusLists().content_tester_python_web_minus_list,
             "tester_ios": MinusLists().content_tester_ios_minus_list,
             "dev_ios": MinusLists().content_dev_ios_minus_list,
             "dev_android": MinusLists().content_dev_android_minus_list,
+            "data_engineer": MinusLists().content_data_engineer_minus_list,
         }
 
         self.content_plus_list = title_plus.get(self.name_suit)

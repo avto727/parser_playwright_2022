@@ -13,6 +13,18 @@ class PlusLists:
         "гпх",
         "самозан",
     ]
+    title_data_engineer_plus_list = [
+        "python",
+        "auto",
+        "авто",
+        "data",
+
+    ]
+    content_data_engineer_plus_list = [
+        "python",
+        "гпх",
+        "самозан",
+    ]
     title_tester_ios_plus_list = [
         "ios",
         "swift",
