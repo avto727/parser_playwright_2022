@@ -38,7 +38,21 @@ class PlusLists:
         "ios",
         "swift",
         "mobile",
-        "auto",
+        "гпх",
+        "самозан",
+
+    ]
+    title_dev_android_plus_list = [
+        "android",
+        "kotlin",
+        "mobile",
+        "гпх",
+        "самозан",
+    ]
+    content_dev_android_plus_list = [
+        "android",
+        "kotlin",
+        "mobile",
         "гпх",
         "самозан",
 

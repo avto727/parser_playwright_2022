@@ -36,6 +36,7 @@ class BasePage:
             "tester_python_web": MinusLists.title_tester_python_web_minus_list,
             "tester_ios": MinusLists.title_tester_ios_minus_list,
             "dev_ios": MinusLists.title_dev_ios_minus_list,
+            "dev_android": MinusLists.title_dev_android_minus_list,
         }
         self.dd = {
             "vacancy_no_doubles": self.vacancy_no_doubles,
@@ -45,11 +46,13 @@ class BasePage:
             "tester_python_web": PlusLists().content_tester_python_web_plus_list,
             "tester_ios": PlusLists().title_tester_ios_plus_list,
             "dev_ios": PlusLists().title_dev_ios_plus_list,
+            "dev_android": PlusLists().title_dev_android_plus_list,
         }
         content_minus = {
             "tester_python_web": MinusLists().content_tester_python_web_minus_list,
-            "tester_ios": MinusLists().content_tester_ios_web_minus_list,
-            "dev_ios": MinusLists().content_dev_ios_web_minus_list,
+            "tester_ios": MinusLists().content_tester_ios_minus_list,
+            "dev_ios": MinusLists().content_dev_ios_minus_list,
+            "dev_android": MinusLists().content_dev_android_minus_list,
         }
 
         self.content_plus_list = title_plus.get(self.name_suit)
@@ -101,7 +104,7 @@ class BasePage:
             try:
                 title = ad.find('a', class_='serp-item__title').text
             except Exception as e:
-                print("Exception title", e)
+                # print("Exception title", e)
                 title = ''
             try:
                 schedule = ad.find(
@@ -111,22 +114,22 @@ class BasePage:
                 ).find(
                     'div', class_='bloko-text').text
             except Exception as e:
-                print("Exception schedule", e)
+                # print("Exception schedule", e)
                 schedule = ''
             try:
                 compensation = ad.find('span', class_='bloko-header-section-3').text
             except Exception as e:
-                print("Exception compensation", e)
+                # print("Exception compensation", e)
                 compensation = ''
             try:
                 href = ad.find('a', class_='serp-item__title').get('href').split("?")[0]
             except Exception as e:
-                print("Exception href", e)
+                # print("Exception href", e)
                 href = ''
             try:
                 employer = ad.find('a', class_='bloko-link bloko-link_kind-tertiary').text
             except Exception as e:
-                print("Exception employer", e)
+                # print("Exception employer", e)
                 employer = ''
             # Фильтр вакансии по заголовку
             if self.title_filter(title):
@@ -247,7 +250,7 @@ class BasePage:
         for i, key in enumerate(vac_sorted_dict):
             self.vacancy_no_doubles[i] = vac_sorted_dict.get(key)
         print(self.vacancy_no_doubles)
-        self.save_results(self.vacancy_no_doubles, "hh_2022_no_doubles")
+        self.save_results(self.vacancy_no_doubles, f"{self.name_suit}_no_doubles")
 
     def sorted_for_salary(self, step):
         # сортировка по ЗП
@@ -335,7 +338,7 @@ class BasePage:
         print(cou, self.vacancy_sort_title_plus)
         self.vacancy_sort_title_plus = BasePage.dict_sorting(self.vacancy_sort_title_plus)
         print("vacancy_sort_title_plus", self.vacancy_sort_title_plus)
-        self.save_results(self.vacancy_sort_title_plus, "short_list_34")
+        self.save_results(self.vacancy_sort_title_plus, f"{self.name_suit}_short_list_34")
         #   3.Найти хоть одно плюс слово в вакансии
         # xpath_c = "//div[contains(@class,'g-user-content')]"
         # for i in range(len(self.vacancy_no_doubles)):
@@ -361,7 +364,7 @@ class BasePage:
         # print(self.vacancy_no_doubles)
         # print(self.vacancy_sort_title_plus)
         # self.intermediate_sorting("vacancy_sort_title_plus")
-        # self.save_results(self.vacancy_sort_title_plus, "long_list_all")
+        # self.save_results(self.vacancy_sort_title_plus, f"{self.name_suit}_long_list_all")
 
         pass
 

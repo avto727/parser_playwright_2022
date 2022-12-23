@@ -13,4 +13,9 @@ def test_tester_ios() -> None:
     pass
 
 
+@scenario("dev_android.feature", "dev_android")
+def test_dev_android() -> None:
+    pass
+
+
 
