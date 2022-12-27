@@ -1,5 +1,19 @@
 class MinusLists:
     title_tester_python_web_minus_list = [
+        "Team Lead Python",
+        "Python Team Lead",
+        "Python Engineer",
+        "Backend Team Lead",
+        "Экономист",
+        "Тимлид",
+        "группы инфраструктуры",
+        "Инженер VDI",
+        "AppSec",
+        "инженер Linux",
+        "Tech Lead",
+        "ML Engineer",
+        "Machine Learning Engineer",
+        "Database administrator",
         "Разработ",
         "рекрутер",
         "писатель",
@@ -112,6 +126,7 @@ class MinusLists:
         "php",
         "c#",
         "nitka",
+        "NOMIA",
     ]
     title_data_engineer_minus_list = [
         "Analytics Engineer",
